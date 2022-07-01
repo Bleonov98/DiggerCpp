@@ -118,7 +118,11 @@ private:
 
     VirtualTerminal term; // console setting
 
+    Enemies* enemy;
+
+
     vector <GameObject*> allObjectList;
+    vector <Enemies*> enemyList;
 
 protected:
 
@@ -139,8 +143,6 @@ protected:
     void DrawChanges();
 
     void SetWall(int x, int y, int type);
-
-    void SpawnEnemies();
 
     void DrawLevel();
 

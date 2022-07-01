@@ -1,6 +1,8 @@
 #pragma once
 #include "Tools.h"
 
+#define WALL_COLOR White
+
 class GameObject
 {
 public:
@@ -49,8 +51,6 @@ public:
 
 protected:
 
-	virtual void CheckNextStep() = 0;
-
 	virtual void ChangeDirection() = 0;
 
 	enum dir {
@@ -77,13 +77,11 @@ public:
 
 	int GetLifes();
 
-protected:
+private:
 
 	int _playerAnimation = 0, lifes = 3;
 
 	static const int DIRECTION = 5;
-
-	void CheckNextStep() override;
 
 	void ChangeDirection() override;
 
@@ -102,8 +100,55 @@ protected:
 			u">"
 		},
 		{
-			u"@"
+			u"-"
 		}
 	};
 
+};
+
+class Enemies : public DynamicObject
+{
+public:
+	Enemies(wd* wData, int x, int y, int speed, int color) :DynamicObject(wData, x, y, speed, color) {
+		MoveTo(10, 10);
+	};
+
+	void DrawObject() override;
+
+	void MoveObject() override;
+
+	void MoveTo(int x, int y);
+
+private:
+
+	vector <pair<int, int>> pathToGoal;
+
+	bool _algMove = false;
+
+	void CheckNextStep();
+
+	void ChangeDirection() override;
+
+};
+
+class MoneyBag: public DynamicObject 
+{
+public:
+	MoneyBag(wd* wData, int x, int y, int speed, int color) :DynamicObject(wData, x, y, speed, color) {};
+private:
+
+};
+
+class Diamond : public GameObject 
+{
+public:
+	Diamond(wd* wData, int x, int y, int speed, int color) : GameObject(wData, x, y, speed, color) {};
+private:
+};
+
+class Wall: public GameObject 
+{
+public:
+	Wall(wd* wData, int x, int y, int speed, int color) :GameObject(wData, x, y, speed, color) {};
+private:
 };

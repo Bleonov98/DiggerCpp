@@ -175,6 +175,10 @@ void Game::RunWorld(bool& restart)
 	Player* player = new Player(&wData, COLS/2, ROWS/2, 1, Yellow);
 	allObjectList.push_back(player);
 
+	enemy = new Enemies(&wData, COLS / 2 + 25, ROWS / 2, 1, Red);
+	allObjectList.push_back(enemy);
+	enemyList.push_back(enemy);
+
 	DrawChanges();
 
 	while (worldIsRun) {
@@ -191,6 +195,14 @@ void Game::RunWorld(bool& restart)
 			SetPos(COLS / 2 - 2, ROWS / 2);
 			cout << "      ";
 
+		}
+
+		player->MoveObject();
+
+		for (int i = 0; i < enemyList.size(); i++)
+		{
+			enemyList[i]->MoveTo(player->GetX(), player->GetY());
+			enemyList[i]->MoveObject();
 		}
 
 		DrawToMem();
