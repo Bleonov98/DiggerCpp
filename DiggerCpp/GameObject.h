@@ -2,6 +2,11 @@
 #include "Tools.h"
 
 #define WALL_COLOR White
+#define SPRITE_HEIGHT 1
+#define SPRITE_WIDTH 4
+#define WALL_HEIGHT 10
+#define WALL_WIDTH 21
+
 
 class GameObject
 {
@@ -78,29 +83,29 @@ public:
 	int GetLifes();
 
 private:
+	
+	static const int DIRECTION = 5;
 
 	int _playerAnimation = 0, lifes = 3;
 
-	static const int DIRECTION = 5;
-
 	void ChangeDirection() override;
 
-	char16_t sprite[DIRECTION][1][2]
+	char16_t playerSprite[DIRECTION][SPRITE_HEIGHT][SPRITE_WIDTH]
 	{
 		{
-			u"V"
+			u"V-V"
 		},
 		{
-			u"<"
+			u"<-<",
 		},
 		{
-			u"^"
+			u"^-^"
 		},
 		{
-			u">"
+			u">->"
 		},
 		{
-			u"-"
+			u"==="
 		}
 	};
 
@@ -110,32 +115,53 @@ class Enemies : public DynamicObject
 {
 public:
 	Enemies(wd* wData, int x, int y, int speed, int color) :DynamicObject(wData, x, y, speed, color) {
-		MoveTo(10, 10);
 	};
 
 	void DrawObject() override;
 
 	void MoveObject() override;
 
-	void MoveTo(int x, int y);
+	void IsInVisArea(Player* player);
 
 private:
 
+	char16_t enemySprite[SPRITE_HEIGHT][SPRITE_WIDTH]
+	{
+		u"0-0"
+	};
+
+	const int VISIBLE_RADIUS = 10;
+
 	vector <pair<int, int>> pathToGoal;
+	vector <pair<int, int>> visibleArea;
 
 	bool _algMove = false;
 
 	void CheckNextStep();
 
+	void RefreshVisibleArea();
+
+	void MoveTo(int x, int y);
+
 	void ChangeDirection() override;
 
 };
 
-class MoneyBag: public DynamicObject 
+class MoneyBag : public GameObject
 {
 public:
-	MoneyBag(wd* wData, int x, int y, int speed, int color) :DynamicObject(wData, x, y, speed, color) {};
+
+	MoneyBag(wd* wData, int x, int y, int speed, int color) :GameObject(wData, x, y, speed, color) {};
+
+	void DrawObject() override;
+
+	void Drop();
+
 private:
+
+	char16_t moneyBagSprite[SPRITE_HEIGHT][SPRITE_WIDTH]{
+		u"($)"
+	};
 
 };
 
@@ -149,6 +175,25 @@ private:
 class Wall: public GameObject 
 {
 public:
+
 	Wall(wd* wData, int x, int y, int speed, int color) :GameObject(wData, x, y, speed, color) {};
+
+	void DrawObject();
+
 private:
+
+	char16_t wallSprite[WALL_HEIGHT][WALL_WIDTH]
+	{
+		u"####################",
+		u"####################",
+		u"####################",
+		u"####################",
+		u"####################",
+		u"####################",
+		u"####################",
+		u"####################",
+		u"####################",
+		u"####################",
+	};
+
 };

@@ -22,7 +22,13 @@ void GameObject::SetY(int y)
 
 void GameObject::EraseObject()
 {
-    wData->vBuf[_y][_x] = u' ';
+    for (int i = 0; i < SPRITE_HEIGHT; i++)
+    {
+        for (int j = 0; j < SPRITE_WIDTH - 1; j++)
+        {
+            wData->vBuf[_y + i][_x + j] = u' ';
+        }
+    }
 }
 
 bool GameObject::IsObjectDelete()
@@ -40,21 +46,54 @@ void GameObject::DeleteObject()
 
 void Enemies::CheckNextStep()
 {
-    if (
-        (_direction == UP) && (wData->vBuf[_y - 1][_x] == (u'#' | (WALL_COLOR << 8)) || _y - 1 == 1)
-        ) {
-        _direction = STOP;
+    
+    if (_direction == UP){
+        for (int i = 0; i < SPRITE_HEIGHT; i++)
+        {
+            for (int j = 0; j < SPRITE_WIDTH - 1; j++)
+            {
+                if (wData->vBuf[_y - i][_x + j] == (u'#' | (WALL_COLOR << 8)) || _y - 1 == 1) {
+                    _direction = STOP;
+                    return;
+                }
+            }
+        }
     }
-    else if (
-        (_direction == RIGHT) && (wData->vBuf[_y][_x + 1] == (u'#' | (WALL_COLOR << 8)) || _x + 1 == COLS - 1)
-        ) {
-        _direction = STOP;
+    else if (_direction == RIGHT) {
+        for (int i = 0; i < SPRITE_HEIGHT; i++)
+        {
+            for (int j = 0; j < SPRITE_WIDTH; j++)
+            {
+                if (wData->vBuf[_y][_x + j] == (u'#' | (WALL_COLOR << 8)) || _x + SPRITE_WIDTH == COLS) {
+                    _direction = STOP;
+                    return;
+                }
+            }
+        }
     }
-    else if (_direction == DOWN && (wData->vBuf[_y + 1][_x] == (u'#' | (WALL_COLOR << 8)) || _y + 1 == ROWS)) {
-        _direction = STOP;
+    else if (_direction == DOWN) {
+        for (int i = 0; i < SPRITE_HEIGHT; i++)
+        {
+            for (int j = 0; j < SPRITE_WIDTH - 1; j++)
+            {
+                if (wData->vBuf[_y + i][_x + j] == (u'#' | (WALL_COLOR << 8)) || _y + 1 == ROWS) {
+                    _direction = STOP;
+                    return;
+                }
+            }
+        }
     }
-    else if (_direction == LEFT && (wData->vBuf[_y][_x - 1] == (u'#' | (WALL_COLOR << 8)) || _x - 1 == 1)) {
-        _direction = STOP;
+    else if (_direction == LEFT) {
+        for (int i = 0; i < SPRITE_HEIGHT; i++)
+        {
+            for (int j = 0; j < SPRITE_WIDTH - 1; j++)
+            {
+                if (wData->vBuf[_y][_x - 1] == (u'#' | (WALL_COLOR << 8)) || _x - 1 == 1) {
+                    _direction = STOP;
+                    return;
+                }
+            }
+        }
     }
 }
 
@@ -83,6 +122,10 @@ void Enemies::MoveTo(int x, int y)
         }
     }
     // erase previous grid state
+
+    if (wData->grid[y][x] == -99) {
+        return;
+    }
 
     pathToGoal.clear();
 
@@ -164,7 +207,13 @@ void Enemies::MoveTo(int x, int y)
 
 void Enemies::DrawObject()
 {
-    wData->vBuf[_y][_x] = u'@' | (_color << 8);
+    for (int i = 0; i < SPRITE_HEIGHT; i++)
+    {
+        for (int j = 0; j < SPRITE_WIDTH - 1; j++)
+        {
+            wData->vBuf[_y + i][_x + j] = enemySprite[i][j] | (_color << 8);
+        }
+    }
 }
 
 void Enemies::ChangeDirection() 
@@ -209,6 +258,58 @@ void Enemies::MoveObject()
             pathToGoal.pop_back();
         }
     }
+
+    RefreshVisibleArea();
+}
+
+void Enemies::IsInVisArea(Player* player)
+{
+    for (int i = 0; i < visibleArea.size(); i++)
+    {
+        if ((player->GetX() == visibleArea[i].first) && (player->GetY() == visibleArea[i].second)) {
+            _algMove = true;
+            MoveTo(player->GetX(), player->GetY());
+            break;
+        }
+    }
+}
+
+void Enemies::RefreshVisibleArea()
+{
+    visibleArea.clear();
+
+    for (int R = 1; R < VISIBLE_RADIUS; R++)
+    {
+        int x = 0;
+        int y = R;
+
+        int delta = 1 - 2 * R;
+        int err = 0;
+
+        while (y >= x) {
+            visibleArea.push_back(make_pair(_x + x, _y + y));
+            visibleArea.push_back(make_pair(_x + x, _y - y));
+            visibleArea.push_back(make_pair(_x - x, _y + y));
+            visibleArea.push_back(make_pair(_x - x, _y - y));
+            visibleArea.push_back(make_pair(_x + y, _y + x));
+            visibleArea.push_back(make_pair(_x + y, _y - x));
+            visibleArea.push_back(make_pair(_x - y, _y + x));
+            visibleArea.push_back(make_pair(_x - y, _y - x));
+
+            err = 2 * (delta + y) - 1;
+
+            if ((delta < 0) && (err <= 0)) {
+                delta += 2 * ++x + 1;
+                continue;
+            }
+            if ((delta > 0) && (err > 0)) {
+                delta -= 2 * --y + 1;
+                continue;
+            }
+
+            delta += 2 * (++x - --y);
+        }
+    }
 }
 
 // -------------------- Player --------------- 
@@ -218,7 +319,7 @@ void Player::ChangeDirection()
     if (GetAsyncKeyState(VK_UP) && (_y - 1 != 1)) {
         _direction = UP;
     }
-    else if (GetAsyncKeyState(VK_RIGHT) && (_x + 1 != COLS - 1)) {
+    else if (GetAsyncKeyState(VK_RIGHT) && (_x + SPRITE_WIDTH != COLS)) {
         _direction = RIGHT;
     }
     else if (GetAsyncKeyState(VK_DOWN) && (_y + 1 != ROWS)) {
@@ -277,5 +378,44 @@ void Player::MoveObject()
 
 void Player::DrawObject()
 {
-    wData->vBuf[_y][_x] = sprite[_direction][0][0] | (_color << 8);
+    for (int i = 0; i < SPRITE_HEIGHT; i++)
+    {
+        for (int j = 0; j < SPRITE_WIDTH - 1; j++)
+        {
+            wData->vBuf[_y + i][_x + j] = playerSprite[_direction][i][j] | (_color << 8);
+        }
+    }
+}
+
+// -------------------- Bonuses --------------
+
+void MoneyBag::Drop()
+{
+    EraseObject();
+    _y++;
+}
+
+void MoneyBag::DrawObject() {
+
+    for (int i = 0; i < SPRITE_HEIGHT; i++)
+    {
+        for (int j = 0; j < SPRITE_WIDTH - 1; j++)
+        {
+            wData->vBuf[_y + i][_x + j] = u'$' | (_color << 8);
+        }
+    }
+
+}
+
+void Wall::DrawObject()
+{
+    for (int i = 0; i < WALL_HEIGHT; i++)
+    {
+        for (int j = 0; j < WALL_WIDTH; j++)
+        {
+            if (wData->vBuf[_y + i][_x + j] == 0 || wData->vBuf[_y + i][_x + j] == u' ') {
+                wData->vBuf[_y + i][_x + j] = wallSprite[i][j] | (_color << 8);
+            }
+        }
+    }
 }

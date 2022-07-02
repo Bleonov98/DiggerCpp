@@ -76,7 +76,7 @@ private:
         }
 
         void SetScreenSize() {
-            int Width = 151, Height = 56, err = 30;
+            int Width = 120, Height = 56, err = 30;
 
             COORD monitorSize = { GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN) };
             COORD bufferSize = { Width, Height };
@@ -119,7 +119,7 @@ private:
     VirtualTerminal term; // console setting
 
     Enemies* enemy;
-
+    Wall* wall;
 
     vector <GameObject*> allObjectList;
     vector <Enemies*> enemyList;
@@ -142,7 +142,7 @@ protected:
 
     void DrawChanges();
 
-    void SetWall(int x, int y, int type);
+    void SetWall(int x, int y);
 
     void DrawLevel();
 

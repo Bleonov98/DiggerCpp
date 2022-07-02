@@ -92,7 +92,7 @@ void Game::DrawChanges()
 					printf(CSI "22;36m");
 				}
 				else if ((prevBuf[y][x] >> 8) == White) {
-					printf(CSI "22;37m");
+					printf(CSI "47;37m");
 				}
 				else printf(CSI "22; 44m");
 
@@ -102,6 +102,17 @@ void Game::DrawChanges()
 			}
 		}
 	}
+}
+
+void Game::SetWall(int x, int y)
+{
+	wall = new Wall(&wData, x, y, 0, White);
+	wall->DrawObject();
+}
+
+void Game::DrawLevel()
+{
+	SetWall(2, 2);
 }
 
 void Game::DrawToMem()
@@ -179,6 +190,8 @@ void Game::RunWorld(bool& restart)
 	allObjectList.push_back(enemy);
 	enemyList.push_back(enemy);
 
+	DrawLevel();
+
 	DrawChanges();
 
 	while (worldIsRun) {
@@ -201,7 +214,7 @@ void Game::RunWorld(bool& restart)
 
 		for (int i = 0; i < enemyList.size(); i++)
 		{
-			enemyList[i]->MoveTo(player->GetX(), player->GetY());
+			enemyList[i]->IsInVisArea(player);
 			enemyList[i]->MoveObject();
 		}
 
