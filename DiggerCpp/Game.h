@@ -120,9 +120,15 @@ private:
 
     Enemies* enemy;
     Wall* wall;
+    MoneyBag* moneyBag;
+    Diamond* diamond;
 
     vector <GameObject*> allObjectList;
     vector <Enemies*> enemyList;
+    vector <MoneyBag*> moneyBagList;
+    vector <Diamond*> diamondList;
+
+
 
 protected:
 
@@ -144,7 +150,15 @@ protected:
 
     void SetWall(int x, int y);
 
+    void SetDiamond(int x, int y);
+
+    void SetMoneyBag(int x, int y);
+
+    void SpawnEnemy();
+
     void DrawLevel();
+
+    void Collision();
 
 public:
 

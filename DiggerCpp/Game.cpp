@@ -20,6 +20,54 @@ void Game::HotKeys(bool& pause)
 	}
 }
 
+void Game::DrawArea()
+{
+	// Set console code page to UTF-8 so console known how to interpret string data
+	SetConsoleOutputCP(CP_UTF8);
+
+	// Enable buffering to prevent VS from chopping up UTF-8 byte sequences
+	setvbuf(stdout, nullptr, _IOFBF, 1000);
+
+	HRSRC hResource = FindResource(hInstance, MAKEINTRESOURCE(IDR_TEXT1), L"TEXT");
+
+	if (hResource)
+	{
+		HGLOBAL hLoadedResource = LoadResource(hInstance, hResource);
+
+		if (hLoadedResource)
+		{
+			LPCSTR area = (LPCSTR)LockResource(hLoadedResource);
+
+			if (area)
+			{
+				DWORD dwResourceSize = SizeofResource(hInstance, hResource);
+
+				if (0 != dwResourceSize)
+				{
+					for (int i = 0; i < strnlen(area, 9000); i++) {
+						cout << area[i];
+					}
+				}
+			}
+		}
+	}
+
+	setvbuf(stdout, NULL, _IONBF, 0);
+}
+
+void Game::CreateWorld() {
+
+	term.Terminal();  // Set virtual terminal settings
+	term.SetScreenSize();
+	term.SetConsoleFont();
+
+	printf(CSI "?1049h"); // enable alt buffer
+	printf(CSI "?25l"); // hide cursor blinking
+
+	DrawArea();
+	DrawLevel();
+}
+
 void Game::DrawEndInfo(bool& restart)
 {
 	if (win) {
@@ -104,17 +152,6 @@ void Game::DrawChanges()
 	}
 }
 
-void Game::SetWall(int x, int y)
-{
-	wall = new Wall(&wData, x, y, 0, White);
-	wall->DrawObject();
-}
-
-void Game::DrawLevel()
-{
-	SetWall(2, 2);
-}
-
 void Game::DrawToMem()
 {
 	for (int i = 0; i < allObjectList.size(); i++)
@@ -123,51 +160,103 @@ void Game::DrawToMem()
 	}
 }
 
-void Game::DrawArea()
+void Game::SetWall(int x, int y)
 {
-	// Set console code page to UTF-8 so console known how to interpret string data
-	SetConsoleOutputCP(CP_UTF8);
-
-	// Enable buffering to prevent VS from chopping up UTF-8 byte sequences
-	setvbuf(stdout, nullptr, _IOFBF, 1000);
-
-	HRSRC hResource = FindResource(hInstance, MAKEINTRESOURCE(IDR_TEXT1), L"TEXT");
-
-	if (hResource)
-	{
-		HGLOBAL hLoadedResource = LoadResource(hInstance, hResource);
-
-		if (hLoadedResource)
-		{
-			LPCSTR area = (LPCSTR)LockResource(hLoadedResource);
-
-			if (area)
-			{
-				DWORD dwResourceSize = SizeofResource(hInstance, hResource);
-
-				if (0 != dwResourceSize)
-				{
-					for (int i = 0; i < strnlen(area, 9000); i++) {
-						cout << area[i];
-					}
-				}
-			}
-		}
-	}
-
-	setvbuf(stdout, NULL, _IONBF, 0);
+	wall = new Wall(&wData, x, y, 0, White);
+	wall->DrawObject();
 }
 
-void Game::CreateWorld() {
+void Game::SetDiamond(int x, int y)
+{
+	diamond = new Diamond(&wData, x, y, 0, Purple);
+	allObjectList.push_back(diamond);
+	diamondList.push_back(diamond);
+}
 
-	term.Terminal();  // Set virtual terminal settings
-	term.SetScreenSize();
-	term.SetConsoleFont();
+void Game::SetMoneyBag(int x, int y)
+{
+	moneyBag = new MoneyBag(&wData, x, y, 0, Green);
+	allObjectList.push_back(moneyBag);
+	moneyBagList.push_back(moneyBag);
+}
 
-	printf(CSI "?1049h"); // enable alt buffer
-	printf(CSI "?25l"); // hide cursor blinking
+void Game::SpawnEnemy()
+{
+	enemy = new Enemies(&wData, COLS - 5, 2, 1, Red);
+	allObjectList.push_back(enemy);
+	enemyList.push_back(enemy);
+}
 
-	DrawArea();
+void Game::DrawLevel()
+{
+	SetWall(7, 2);
+	SetWall(WALL_WIDTH + 5, 2);
+	SetWall(WALL_WIDTH * 2, 2);
+	SetWall(WALL_WIDTH * 3, 2);
+
+	SetWall(7, WALL_HEIGHT + 3);
+	SetWall(WALL_WIDTH, WALL_HEIGHT + 3);
+	SetWall(WALL_WIDTH * 2, WALL_HEIGHT + 3);
+	SetWall(WALL_WIDTH * 3, WALL_HEIGHT + 3);
+
+	SetWall(7, WALL_HEIGHT * 2 + 3);
+	SetWall(WALL_WIDTH + 5, WALL_HEIGHT * 2 + 3);
+	SetWall(WALL_WIDTH * 2, WALL_HEIGHT * 2 + 3);
+	SetWall(WALL_WIDTH * 3, WALL_HEIGHT * 2 + 3);
+
+	SetWall(7, WALL_HEIGHT * 3 + 3);
+	SetWall(WALL_WIDTH + 5, WALL_HEIGHT * 3 + 3);
+	SetWall(WALL_WIDTH * 2, WALL_HEIGHT * 3 + 3);
+	SetWall(WALL_WIDTH * 3, WALL_HEIGHT * 3 + 3);
+
+	SetWall(7, WALL_HEIGHT * 4);
+	SetWall(WALL_WIDTH + SPRITE_WIDTH, WALL_HEIGHT * 4);
+	SetWall(WALL_WIDTH * 2 + SPRITE_WIDTH, WALL_HEIGHT * 4);
+	SetWall(WALL_WIDTH * 3, WALL_HEIGHT * 4);
+
+	// ---- DiamondBlock_1 -----
+	SetDiamond(12, 15);
+	SetDiamond(12 + SPRITE_WIDTH, 15);
+	SetDiamond(12 + SPRITE_WIDTH * 2, 15);
+
+	SetDiamond(10 + SPRITE_WIDTH, 17);
+	SetDiamond(10 + SPRITE_WIDTH * 2, 17);
+
+	SetDiamond(12 + SPRITE_WIDTH, 19);
+	
+	// ---- DiamondBlock_2 -----
+	SetDiamond(52, 25);
+	SetDiamond(52 + SPRITE_WIDTH, 25);
+	SetDiamond(52 + SPRITE_WIDTH * 2, 25);
+
+	SetDiamond(50 + SPRITE_WIDTH, 27);
+	SetDiamond(50 + SPRITE_WIDTH * 2, 27);
+
+	SetDiamond(52 + SPRITE_WIDTH, 29);
+
+	// ---- DiamondBlock_3 -----
+	SetDiamond(32, 35);
+	SetDiamond(32 + SPRITE_WIDTH, 35);
+	SetDiamond(32 + SPRITE_WIDTH * 2, 35);
+
+	SetDiamond(30 + SPRITE_WIDTH, 37);
+	SetDiamond(30 + SPRITE_WIDTH * 2, 37);
+
+	SetDiamond(32 + SPRITE_WIDTH, 39);
+	// -------------------------
+
+	SetMoneyBag(15, 10);
+
+	SetMoneyBag(28, 15);
+	SetMoneyBag(28 + SPRITE_WIDTH, 15);
+	SetMoneyBag(28 + SPRITE_WIDTH * 2, 15);
+	
+	
+
+}
+
+void Game::Collision()
+{
 }
 
 void Game::RunWorld(bool& restart)
@@ -176,23 +265,16 @@ void Game::RunWorld(bool& restart)
 	CreateWorld();
 
 	bool pause = false;
+	score = 0;
 
 	thread hotKeys([&]
 		{ HotKeys(pause); }
 	);
 
-	score = 0;
-
-	Player* player = new Player(&wData, COLS/2, ROWS/2, 1, Yellow);
+	Player* player = new Player(&wData, 2, 2, 1, Yellow);
 	allObjectList.push_back(player);
 
-	enemy = new Enemies(&wData, COLS / 2 + 25, ROWS / 2, 1, Red);
-	allObjectList.push_back(enemy);
-	enemyList.push_back(enemy);
-
-	DrawLevel();
-
-	DrawChanges();
+	SpawnEnemy();
 
 	while (worldIsRun) {
 
@@ -214,8 +296,13 @@ void Game::RunWorld(bool& restart)
 
 		for (int i = 0; i < enemyList.size(); i++)
 		{
-			enemyList[i]->IsInVisArea(player);
 			enemyList[i]->MoveObject();
+			enemyList[i]->IsInVisArea(player);
+		}
+
+		for (int i = 0; i < moneyBagList.size(); i++)
+		{
+			moneyBagList[i]->Drop();
 		}
 
 		DrawToMem();
@@ -225,7 +312,6 @@ void Game::RunWorld(bool& restart)
 		DrawInfo(player);
 
 		Sleep(60);
-
 	}
 
 	DrawEndInfo(restart);

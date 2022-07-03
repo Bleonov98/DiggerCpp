@@ -52,7 +52,7 @@ void Enemies::CheckNextStep()
         {
             for (int j = 0; j < SPRITE_WIDTH - 1; j++)
             {
-                if (wData->vBuf[_y - i][_x + j] == (u'#' | (WALL_COLOR << 8)) || _y - 1 == 1) {
+                if (wData->vBuf[_y - 1][_x + j] == (u'#' | (WALL_COLOR << 8)) || _y - 1 == 1) {
                     _direction = STOP;
                     return;
                 }
@@ -76,7 +76,7 @@ void Enemies::CheckNextStep()
         {
             for (int j = 0; j < SPRITE_WIDTH - 1; j++)
             {
-                if (wData->vBuf[_y + i][_x + j] == (u'#' | (WALL_COLOR << 8)) || _y + 1 == ROWS) {
+                if (wData->vBuf[_y + 1][_x + j] == (u'#' | (WALL_COLOR << 8)) || _y + 1 == ROWS) {
                     _direction = STOP;
                     return;
                 }
@@ -99,6 +99,7 @@ void Enemies::CheckNextStep()
 
 void Enemies::MoveTo(int x, int y)
 {
+    pathToGoal.clear();
     pair<int, int> targetPos;
     targetPos.first = x;
     targetPos.second = y;
@@ -123,11 +124,15 @@ void Enemies::MoveTo(int x, int y)
     }
     // erase previous grid state
 
-    if (wData->grid[y][x] == -99) {
-        return;
+    for (int i = 0; i < SPRITE_HEIGHT; ++i)
+    {
+        for (int j = 0; j < SPRITE_WIDTH - 1; j++)
+        {
+            if (wData->grid[y][x + j] == -99) {
+                return;
+            }
+        }
     }
-
-    pathToGoal.clear();
 
     pair<int, int> startPos = make_pair(GetX(), GetY());
 
@@ -202,7 +207,21 @@ void Enemies::MoveTo(int x, int y)
         d--;
     }
 
-    _algMove = true;
+    for (int size = 0; size < pathToGoal.size(); size++)
+    {
+        for (int i = 0; i < SPRITE_HEIGHT; i++)
+        {
+            for (int j = 0; j < SPRITE_WIDTH - 1; j++)
+            {
+                if (wData->grid[pathToGoal[size].second + i][pathToGoal[size].first + j] == -99) {
+                    pathToGoal.clear();
+                    _algMove = false;
+                    return;
+                }
+            }
+        }
+    }
+    
 }
 
 void Enemies::DrawObject()
@@ -227,15 +246,15 @@ void Enemies::MoveObject()
 {
     EraseObject();
 
+    ChangeDirection();
+
+    CheckNextStep();
+
     if (pathToGoal.empty()) {
         _algMove = false;
     }
 
     if (!_algMove) {
-
-        ChangeDirection();
-
-        CheckNextStep();
 
         if (_direction == UP) {
             SetY(_y -= _speed);
@@ -264,12 +283,14 @@ void Enemies::MoveObject()
 
 void Enemies::IsInVisArea(Player* player)
 {
-    for (int i = 0; i < visibleArea.size(); i++)
-    {
-        if ((player->GetX() == visibleArea[i].first) && (player->GetY() == visibleArea[i].second)) {
-            _algMove = true;
-            MoveTo(player->GetX(), player->GetY());
-            break;
+    if (_algMove == false) {
+        for (int i = 0; i < visibleArea.size(); i++)
+        {
+            if ((player->GetX() == visibleArea[i].first) && (player->GetY() == visibleArea[i].second)) {
+                _algMove = true;
+                MoveTo(player->GetX(), player->GetY());
+                break;
+            }
         }
     }
 }
@@ -312,6 +333,7 @@ void Enemies::RefreshVisibleArea()
     }
 }
 
+
 // -------------------- Player --------------- 
 
 void Player::ChangeDirection()
@@ -339,6 +361,7 @@ void Player::Death(bool& worldIsRun)
     }
     else lifes--;
 }
+
 
 int Player::GetLifes()
 {
@@ -387,23 +410,76 @@ void Player::DrawObject()
     }
 }
 
+
+// -------------------- Bullet ---------------
+
+void Bullet::MoveObject()
+{
+
+}
+
+void Bullet::DrawObject()
+{
+    wData->vBuf[_y][_x] = u' ' | (_color << 8);
+}
+
+bool Bullet::isBulletGo()
+{
+    return _alreadyGo;
+}
+
+void Bullet::ChangeDirection()
+{
+    if (_direction == UP && wData->vBuf[_y - 1][_x] == u' ');
+}
+
+
 // -------------------- Bonuses --------------
 
 void MoneyBag::Drop()
 {
-    EraseObject();
-    _y++;
-}
-
-void MoneyBag::DrawObject() {
-
     for (int i = 0; i < SPRITE_HEIGHT; i++)
     {
         for (int j = 0; j < SPRITE_WIDTH - 1; j++)
         {
-            wData->vBuf[_y + i][_x + j] = u'$' | (_color << 8);
+            if (wData->vBuf[_y + 1][_x + j] == u' ' || wData->vBuf[_y + 1][_x + j] == 0) {
+                _fall++;
+
+                EraseObject();
+                _y++;
+
+                if (_fall >= 2) {
+                    _isOpen = true;
+                }
+                else if (wData->vBuf[_y + 1][_x + j] != u' ' && wData->vBuf[_y + 1][_x + j] != 0) _fall = 0;
+
+                return;
+            }
         }
     }
+}
+
+void MoneyBag::DrawObject() {
+
+    if (_isOpen) {
+        for (int i = 0; i < SPRITE_HEIGHT; i++)
+        {
+            for (int j = 0; j < SPRITE_WIDTH - 1; j++)
+            {
+                wData->vBuf[_y + i][_x + j] = moneyBagSpriteOpen[i][j] | (_color << 8);
+            }
+        }
+    }
+    else {
+        for (int i = 0; i < SPRITE_HEIGHT; i++)
+        {
+            for (int j = 0; j < SPRITE_WIDTH - 1; j++)
+            {
+                wData->vBuf[_y + i][_x + j] = moneyBagSprite[i][j] | (_color << 8);
+            }
+        }
+    }
+    
 
 }
 
@@ -416,6 +492,17 @@ void Wall::DrawObject()
             if (wData->vBuf[_y + i][_x + j] == 0 || wData->vBuf[_y + i][_x + j] == u' ') {
                 wData->vBuf[_y + i][_x + j] = wallSprite[i][j] | (_color << 8);
             }
+        }
+    }
+}
+
+void Diamond::DrawObject()
+{
+    for (int i = 0; i < SPRITE_HEIGHT; i++)
+    {
+        for (int j = 0; j < SPRITE_WIDTH - 1; j++)
+        {
+            wData->vBuf[_y + i][_x + j] = spriteDiamond[i][j] | (_color << 8);
         }
     }
 }

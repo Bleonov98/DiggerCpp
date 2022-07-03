@@ -1,11 +1,11 @@
 #pragma once
 #include "Tools.h"
 
-#define WALL_COLOR White
 #define SPRITE_HEIGHT 1
 #define SPRITE_WIDTH 4
 #define WALL_HEIGHT 10
 #define WALL_WIDTH 21
+#define WALL_COLOR White
 
 
 class GameObject
@@ -163,6 +163,15 @@ private:
 		u"($)"
 	};
 
+	char16_t moneyBagSpriteOpen[SPRITE_HEIGHT][SPRITE_WIDTH]{
+		u"#X#"
+	};
+
+
+	bool _isOpen = false;
+
+	int _fall = 0;
+
 };
 
 class Diamond : public GameObject 
@@ -170,6 +179,21 @@ class Diamond : public GameObject
 public:
 	Diamond(wd* wData, int x, int y, int speed, int color) : GameObject(wData, x, y, speed, color) {};
 private:
+
+	void DrawObject() override;
+
+	char16_t spriteDiamond[SPRITE_HEIGHT][SPRITE_WIDTH]{
+		u"(A)"
+	};
+};
+
+class Bonus: public GameObject
+{
+public:
+	Bonus(wd* wData, int x, int y, int speed, int color) :GameObject(wData, x, y, speed, color) {};
+
+private:
+
 };
 
 class Wall: public GameObject 
@@ -195,5 +219,23 @@ private:
 		u"####################",
 		u"####################",
 	};
+
+};
+
+class Bullet: public DynamicObject
+{
+public:
+
+	void MoveObject() override;
+
+	void DrawObject() override;
+
+	bool isBulletGo();
+
+private:
+
+	void ChangeDirection() override;
+
+	bool _alreadyGo = false;
 
 };
