@@ -139,6 +139,24 @@ void Game::DrawChanges()
 				else if ((prevBuf[y][x] >> 8) == Cyan) {
 					printf(CSI "22;36m");
 				}
+				else if ((prevBuf[y][x] >> 8) == BrRed) {
+					printf(CSI "22;91m");
+				}
+				else if ((prevBuf[y][x] >> 8) == BrGreen) {
+					printf(CSI "22;92m");
+				}
+				else if ((prevBuf[y][x] >> 8) == BrBlue) {
+					printf(CSI "22;94m");
+				}
+				else if ((prevBuf[y][x] >> 8) == BrCyan) {
+					printf(CSI "22;96m");
+				}
+				else if ((prevBuf[y][x] >> 8) == BrPurple) {
+					printf(CSI "22;95m");
+				}
+				else if ((prevBuf[y][x] >> 8) == BrYellow) {
+					printf(CSI "22;93m");
+				}
 				else if ((prevBuf[y][x] >> 8) == White) {
 					printf(CSI "47;37m");
 				}
@@ -154,6 +172,42 @@ void Game::DrawChanges()
 
 void Game::DrawToMem()
 {
+	for (int i = 0; i < enemyList.size(); i++)
+	{
+		if (enemyList[i]->IsObjectDelete()) {
+			enemyList.erase(enemyList.begin() + i);
+		}
+	}
+
+	for (int i = 0; i < moneyBagList.size(); i++)
+	{
+		if (moneyBagList[i]->IsObjectDelete()) {
+			moneyBagList.erase(moneyBagList.begin() + i);
+		}
+	}
+
+	for (int i = 0; i < diamondList.size(); i++)
+	{
+		if (diamondList[i]->IsObjectDelete()) {
+			diamondList.erase(diamondList.begin() + i);
+		}
+	}
+	
+	for (int i = 0; i < bulletList.size(); i++)
+	{
+		if (bulletList[i]->IsObjectDelete()) {
+			bulletList.erase(bulletList.begin() + i);
+		}
+	}
+
+	for (int i = 0; i < allObjectList.size(); i++)
+	{
+		if (allObjectList[i]->IsObjectDelete()) {
+			wData.vBuf[allObjectList[i]->GetY()][allObjectList[i]->GetX()] = u' ';
+			allObjectList.erase(allObjectList.begin() + i);
+		}
+	}
+
 	for (int i = 0; i < allObjectList.size(); i++)
 	{
 		allObjectList[i]->DrawObject();
@@ -168,7 +222,7 @@ void Game::SetWall(int x, int y)
 
 void Game::SetDiamond(int x, int y)
 {
-	diamond = new Diamond(&wData, x, y, 0, Purple);
+	diamond = new Diamond(&wData, x, y, 0, BrCyan);
 	allObjectList.push_back(diamond);
 	diamondList.push_back(diamond);
 }
@@ -180,6 +234,13 @@ void Game::SetMoneyBag(int x, int y)
 	moneyBagList.push_back(moneyBag);
 }
 
+void Game::SetBonus(int x, int y)
+{
+	bonus = new Bonus(&wData, x, y, 0, BrPurple);
+	bonusList.push_back(bonus);
+	allObjectList.push_back(bonus);
+}
+
 void Game::SpawnEnemy()
 {
 	enemy = new Enemies(&wData, COLS - 5, 2, 1, Red);
@@ -189,32 +250,35 @@ void Game::SpawnEnemy()
 
 void Game::DrawLevel()
 {
-	SetWall(7, 2);
-	SetWall(WALL_WIDTH + 5, 2);
-	SetWall(WALL_WIDTH * 2, 2);
-	SetWall(WALL_WIDTH * 3, 2);
+	// --------------------- WALL ---------------------
+	
+	SetWall(5, 2);
+	SetWall(WALL_WIDTH + 4, 2);
+	SetWall(WALL_WIDTH * 2 + 3, 2);
+	SetWall(WALL_WIDTH * 3 + 2, 2);
 
-	SetWall(7, WALL_HEIGHT + 3);
-	SetWall(WALL_WIDTH, WALL_HEIGHT + 3);
-	SetWall(WALL_WIDTH * 2, WALL_HEIGHT + 3);
-	SetWall(WALL_WIDTH * 3, WALL_HEIGHT + 3);
+	SetWall(5, WALL_HEIGHT + 2);
+	SetWall(WALL_WIDTH + 4, WALL_HEIGHT + 2);
+	SetWall(WALL_WIDTH * 2 + 3, WALL_HEIGHT + 2);
+	SetWall(WALL_WIDTH * 3 + 2, WALL_HEIGHT + 2);
 
-	SetWall(7, WALL_HEIGHT * 2 + 3);
-	SetWall(WALL_WIDTH + 5, WALL_HEIGHT * 2 + 3);
-	SetWall(WALL_WIDTH * 2, WALL_HEIGHT * 2 + 3);
-	SetWall(WALL_WIDTH * 3, WALL_HEIGHT * 2 + 3);
+	SetWall(5, WALL_HEIGHT * 2 + 2);
+	SetWall(WALL_WIDTH + 4, WALL_HEIGHT * 2 + 2);
+	SetWall(WALL_WIDTH * 2 + 3, WALL_HEIGHT * 2 + 2);
+	SetWall(WALL_WIDTH * 3 + 2, WALL_HEIGHT * 2 + 2);
 
-	SetWall(7, WALL_HEIGHT * 3 + 3);
-	SetWall(WALL_WIDTH + 5, WALL_HEIGHT * 3 + 3);
-	SetWall(WALL_WIDTH * 2, WALL_HEIGHT * 3 + 3);
-	SetWall(WALL_WIDTH * 3, WALL_HEIGHT * 3 + 3);
+	SetWall(5, WALL_HEIGHT * 3 + 2);
+	SetWall(WALL_WIDTH + 4, WALL_HEIGHT * 3 + 2);
+	SetWall(WALL_WIDTH * 2 + 3, WALL_HEIGHT * 3 + 2);
+	SetWall(WALL_WIDTH * 3 + 2, WALL_HEIGHT * 3 + 2);
 
-	SetWall(7, WALL_HEIGHT * 4);
-	SetWall(WALL_WIDTH + SPRITE_WIDTH, WALL_HEIGHT * 4);
-	SetWall(WALL_WIDTH * 2 + SPRITE_WIDTH, WALL_HEIGHT * 4);
-	SetWall(WALL_WIDTH * 3, WALL_HEIGHT * 4);
+	SetWall(5, WALL_HEIGHT * 4 + 2);
+	SetWall(WALL_WIDTH + 4, WALL_HEIGHT * 4 + 2);
+	SetWall(WALL_WIDTH * 2 + 3, WALL_HEIGHT * 4 + 2);
+	SetWall(WALL_WIDTH * 3 + 2, WALL_HEIGHT * 4 + 2);
 
 	// ---- DiamondBlock_1 -----
+
 	SetDiamond(12, 15);
 	SetDiamond(12 + SPRITE_WIDTH, 15);
 	SetDiamond(12 + SPRITE_WIDTH * 2, 15);
@@ -225,6 +289,7 @@ void Game::DrawLevel()
 	SetDiamond(12 + SPRITE_WIDTH, 19);
 	
 	// ---- DiamondBlock_2 -----
+
 	SetDiamond(52, 25);
 	SetDiamond(52 + SPRITE_WIDTH, 25);
 	SetDiamond(52 + SPRITE_WIDTH * 2, 25);
@@ -235,6 +300,7 @@ void Game::DrawLevel()
 	SetDiamond(52 + SPRITE_WIDTH, 29);
 
 	// ---- DiamondBlock_3 -----
+
 	SetDiamond(32, 35);
 	SetDiamond(32 + SPRITE_WIDTH, 35);
 	SetDiamond(32 + SPRITE_WIDTH * 2, 35);
@@ -243,7 +309,8 @@ void Game::DrawLevel()
 	SetDiamond(30 + SPRITE_WIDTH * 2, 37);
 
 	SetDiamond(32 + SPRITE_WIDTH, 39);
-	// -------------------------
+
+	// ------------ MONEY BAG --------- 
 
 	SetMoneyBag(15, 10);
 
@@ -251,12 +318,59 @@ void Game::DrawLevel()
 	SetMoneyBag(28 + SPRITE_WIDTH, 15);
 	SetMoneyBag(28 + SPRITE_WIDTH * 2, 15);
 	
-	
+	// ------------ BONUS ------------- 
+
+	SetBonus(COLS - SPRITE_WIDTH, 2);
 
 }
 
-void Game::Collision()
+void Game::Collision(Player* player)
 {
+	for (int size = 0; size < enemyList.size(); size++)
+	{
+		for (int i = 0; i < SPRITE_HEIGHT; i++)
+		{
+			for (int j = 0; j < SPRITE_WIDTH - 1; j++)
+			{
+				if ( (player->GetX() + j == enemyList[size]->GetX()) && (player->GetY() + i == enemyList[size]->GetY() + i) ||
+					 (player->GetX() + j == enemyList[size]->GetX() + 1) && (player->GetY() + i == enemyList[size]->GetY() + i) ||
+					 (player->GetX() + j == enemyList[size]->GetX() + 2) && (player->GetY() + i == enemyList[size]->GetY() + i) ) {
+
+					player->Death(worldIsRun);
+
+					enemyList[size]->SetX(COLS - 5);
+					enemyList[size]->SetY(2);
+
+					player->SetX(2);
+					player->SetY(2);
+
+					return;
+				}
+			}
+		}
+	}
+
+	for (int size = 0; size < diamondList.size(); size++)
+	{
+		for (int i = 0; i < SPRITE_HEIGHT; i++)
+		{
+			for (int j = 0; j < SPRITE_WIDTH - 1; j++)
+			{
+				if ((player->GetX() + j == diamondList[size]->GetX()) && (player->GetY() + i == diamondList[size]->GetY() + i) ||
+					(player->GetX() + j == diamondList[size]->GetX() + (SPRITE_WIDTH - 1)) && (player->GetY() + i == diamondList[size]->GetY() + i)) {
+
+					score += 100;
+					diamondList[size]->DeleteObject();
+
+					return;
+				}
+			}
+		}
+	}
+
+
+
+
 }
 
 void Game::RunWorld(bool& restart)
@@ -271,7 +385,7 @@ void Game::RunWorld(bool& restart)
 		{ HotKeys(pause); }
 	);
 
-	Player* player = new Player(&wData, 2, 2, 1, Yellow);
+	Player* player = new Player(&wData, 2, 2, 1, Cyan);
 	allObjectList.push_back(player);
 
 	SpawnEnemy();
@@ -305,9 +419,25 @@ void Game::RunWorld(bool& restart)
 			moneyBagList[i]->Drop();
 		}
 
+		if (bulletList.empty()) {
+			if (GetAsyncKeyState(VK_SPACE)) {
+				bullet = new Bullet(&wData, player->GetX() + 1, player->GetY(), 1, Red);
+				bullet->Shot(player->GetDirection());
+				bulletList.push_back(bullet);
+				allObjectList.push_back(bullet);
+			}
+		}
+
+		for (int i = 0; i < bulletList.size(); i++)
+		{
+			bulletList[i]->MoveObject();
+		}
+
 		DrawToMem();
 
 		DrawChanges();
+
+		Collision(player);
 
 		DrawInfo(player);
 

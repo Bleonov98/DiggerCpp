@@ -38,7 +38,7 @@ protected:
 
 	bool _deleteObject = false;
 
-	void EraseObject();
+	virtual void EraseObject();
 
 	virtual ~GameObject() {
 		delete this;
@@ -53,6 +53,8 @@ public:
 	DynamicObject(wd* wData, int x, int y, int speed, int color) : GameObject(wData, x, y, speed, color) {};
 
 	virtual void MoveObject() = 0;
+
+	int GetDirection();
 
 protected:
 
@@ -157,6 +159,8 @@ public:
 
 	void Drop();
 
+	bool BagIsOpen();
+
 private:
 
 	char16_t moneyBagSprite[SPRITE_HEIGHT][SPRITE_WIDTH]{
@@ -164,7 +168,7 @@ private:
 	};
 
 	char16_t moneyBagSpriteOpen[SPRITE_HEIGHT][SPRITE_WIDTH]{
-		u"#X#"
+		u"###"
 	};
 
 
@@ -183,8 +187,9 @@ private:
 	void DrawObject() override;
 
 	char16_t spriteDiamond[SPRITE_HEIGHT][SPRITE_WIDTH]{
-		u"(A)"
+		u"(V)"
 	};
+
 };
 
 class Bonus: public GameObject
@@ -192,7 +197,13 @@ class Bonus: public GameObject
 public:
 	Bonus(wd* wData, int x, int y, int speed, int color) :GameObject(wData, x, y, speed, color) {};
 
+	void DrawObject() override;
+
 private:
+
+	char16_t spriteBonus[SPRITE_HEIGHT][SPRITE_WIDTH]{
+		u"(+)"
+	};
 
 };
 
@@ -226,16 +237,17 @@ class Bullet: public DynamicObject
 {
 public:
 
+	Bullet(wd* wData, int x, int y, int speed, int color) :DynamicObject(wData, x, y, speed, color) {};
+
+	void Shot(int direction);
+
 	void MoveObject() override;
 
 	void DrawObject() override;
 
-	bool isBulletGo();
-
 private:
 
+	void EraseObject() override;
+
 	void ChangeDirection() override;
-
-	bool _alreadyGo = false;
-
 };

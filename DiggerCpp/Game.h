@@ -122,12 +122,15 @@ private:
     Wall* wall;
     MoneyBag* moneyBag;
     Diamond* diamond;
+    Bullet* bullet;
+    Bonus* bonus;
 
     vector <GameObject*> allObjectList;
     vector <Enemies*> enemyList;
     vector <MoneyBag*> moneyBagList;
     vector <Diamond*> diamondList;
-
+    vector <Bullet*> bulletList;
+    vector <Bonus*> bonusList;
 
 
 protected:
@@ -154,11 +157,13 @@ protected:
 
     void SetMoneyBag(int x, int y);
 
+    void SetBonus(int x, int y);
+
     void SpawnEnemy();
 
     void DrawLevel();
 
-    void Collision();
+    void Collision(Player* player);
 
 public:
 
