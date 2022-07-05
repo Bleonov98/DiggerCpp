@@ -192,6 +192,13 @@ void Game::DrawToMem()
 			diamondList.erase(diamondList.begin() + i);
 		}
 	}
+
+	for (int i = 0; i < bonusList.size(); i++)
+	{
+		if (bonusList[i]->IsObjectDelete()) {
+			bonusList.erase(bonusList.begin() + i);
+		}
+	}
 	
 	for (int i = 0; i < bulletList.size(); i++)
 	{
@@ -326,6 +333,7 @@ void Game::DrawLevel()
 
 void Game::Collision(Player* player)
 {
+
 	for (int size = 0; size < enemyList.size(); size++)
 	{
 		for (int i = 0; i < SPRITE_HEIGHT; i++)
@@ -367,10 +375,47 @@ void Game::Collision(Player* player)
 			}
 		}
 	}
+		
+	for (int size = 0; size < moneyBagList.size(); size++)
+	{
+		for (int i = 0; i < SPRITE_HEIGHT; i++)
+		{
+			for (int j = 0; j < SPRITE_WIDTH - 1; j++)
+			{
 
+				if ( moneyBagList[size]->BagIsOpen() && 
+					 ((player->GetX() + j == moneyBagList[size]->GetX()) && (player->GetY() + i == moneyBagList[size]->GetY() + i) ||
+					 (player->GetX() + j == moneyBagList[size]->GetX() + (SPRITE_WIDTH - 1)) && (player->GetY() + i == moneyBagList[size]->GetY() + i)) ) {
 
+					score += 1000;
+					moneyBagList[size]->DeleteObject();
 
+					return;
+				}
 
+			}
+		}
+	}
+
+	for (int size = 0; size < bonusList.size(); size++)
+	{
+		for (int i = 0; i < SPRITE_HEIGHT; i++)
+		{
+			for (int j = 0; j < SPRITE_WIDTH - 1; j++)
+			{
+
+				if ( (player->GetX() + j == bonusList[size]->GetX() && player->GetY() + i == bonusList[size]->GetY() + i) ||
+					 (player->GetX() + j == bonusList[size]->GetX() + (SPRITE_WIDTH - 1) && player->GetY() + i == bonusList[size]->GetY() + i) ) {
+
+					score += 500;
+					bonusList[size]->DeleteObject();
+
+					return;
+				}
+
+			}
+		}
+	}
 }
 
 void Game::RunWorld(bool& restart)
