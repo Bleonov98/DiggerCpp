@@ -30,6 +30,8 @@ public:
 
 	void DeleteObject();
 
+	virtual void EraseObject();
+
 protected:
 
 	wd* wData;
@@ -37,8 +39,6 @@ protected:
 	int _x, _y, _speed, _color;
 
 	bool _deleteObject = false;
-
-	virtual void EraseObject();
 
 	virtual ~GameObject() {
 		delete this;
@@ -56,17 +56,13 @@ public:
 
 	int GetDirection();
 
+	void UnderMoneyBag();
+
 protected:
 
 	virtual void ChangeDirection() = 0;
 
-	enum dir {
-		UP,
-		RIGHT,
-		DOWN,
-		LEFT,
-		STOP
-	};
+	bool _isFalling = false;
 
 	int _direction = STOP;
 };
@@ -161,6 +157,8 @@ public:
 
 	bool BagIsOpen();
 
+	bool BagIsFalling();
+
 private:
 
 	char16_t moneyBagSprite[SPRITE_HEIGHT][SPRITE_WIDTH]{
@@ -172,7 +170,7 @@ private:
 	};
 
 
-	bool _isOpen = false;
+	bool _isOpen = false, _isFalling = false;
 
 	int _fall = 0;
 

@@ -47,6 +47,11 @@ int DynamicObject::GetDirection()
     return _direction;
 }
 
+void DynamicObject::UnderMoneyBag()
+{
+    _isFalling = true;
+}
+
 
 // -------------------- Enemy --------------- 
 
@@ -368,6 +373,8 @@ void Player::Death(bool& worldIsRun)
         worldIsRun = false;
     }
     else lifes--;
+
+    _isFalling = false;
 }
 
 int Player::GetLifes()
@@ -381,7 +388,7 @@ void Player::MoveObject()
 
     ChangeDirection();
 
-    if (_direction != STOP) {
+    if (_direction != STOP && !_isFalling) {
 
         EraseObject();
 
@@ -485,6 +492,8 @@ void MoneyBag::Drop()
         }
     }
 
+    _isFalling = true;
+
     EraseObject();
     _y++;
     _fall++;
@@ -494,6 +503,7 @@ void MoneyBag::Drop()
         if (wData->vBuf[_y + 1][_x + i] == (u'#' | (WALL_COLOR << 8)) || _y + 1 == ROWS) {
             if (_fall >= 2) {
                 _isOpen = true;
+                _isFalling = false;
             }
             else if (_fall <= 1) {
                 _fall = 0;
@@ -505,6 +515,11 @@ void MoneyBag::Drop()
 bool MoneyBag::BagIsOpen()
 {
     return _isOpen;
+}
+
+bool MoneyBag::BagIsFalling()
+{
+    return _isFalling;
 }
 
 void MoneyBag::DrawObject() {

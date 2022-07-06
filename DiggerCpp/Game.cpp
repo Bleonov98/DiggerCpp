@@ -333,7 +333,7 @@ void Game::DrawLevel()
 
 void Game::Collision(Player* player)
 {
-
+	// die settings
 	for (int size = 0; size < enemyList.size(); size++)
 	{
 		for (int i = 0; i < SPRITE_HEIGHT; i++)
@@ -346,17 +346,24 @@ void Game::Collision(Player* player)
 
 					player->Death(worldIsRun);
 
-					enemyList[size]->SetX(COLS - 5);
-					enemyList[size]->SetY(2);
-
 					player->SetX(2);
 					player->SetY(2);
+
+					for (int enm = 0; enm < enemyList.size(); enm++)
+					{
+						enemyList[enm]->EraseObject();
+						enemyList[enm]->SetX(COLS - 5);
+						enemyList[enm]->SetY(2);
+					}
+
+					Sleep(200);
 
 					return;
 				}
 			}
 		}
 	}
+	// ------------
 
 	for (int size = 0; size < diamondList.size(); size++)
 	{
@@ -375,7 +382,9 @@ void Game::Collision(Player* player)
 			}
 		}
 	}
-		
+
+	// moneyBag collision settings
+
 	for (int size = 0; size < moneyBagList.size(); size++)
 	{
 		for (int i = 0; i < SPRITE_HEIGHT; i++)
@@ -385,17 +394,100 @@ void Game::Collision(Player* player)
 
 				if ( moneyBagList[size]->BagIsOpen() && 
 					 ((player->GetX() + j == moneyBagList[size]->GetX()) && (player->GetY() + i == moneyBagList[size]->GetY() + i) ||
-					 (player->GetX() + j == moneyBagList[size]->GetX() + (SPRITE_WIDTH - 1)) && (player->GetY() + i == moneyBagList[size]->GetY() + i)) ) {
+					 (player->GetX() + j == moneyBagList[size]->GetX() + (SPRITE_WIDTH - 1)) && (player->GetY() + i == moneyBagList[size]->GetY() + i)) ) 
+				{
 
 					score += 1000;
 					moneyBagList[size]->DeleteObject();
 
 					return;
 				}
-
 			}
 		}
 	}
+
+	for (int size = 0; size < moneyBagList.size(); size++)
+	{
+		for (int i = 0; i < enemyList.size(); i++)
+		{
+			if ((!moneyBagList[size]->BagIsOpen()) &&
+				(player->GetX() + (SPRITE_WIDTH - 2) == moneyBagList[size]->GetX()) && (player->GetY() == moneyBagList[size]->GetY())
+				&& (player->GetDirection() == 1)) {
+
+				moneyBagList[size]->SetX(moneyBagList[size]->GetX() + 1);
+			}
+			else if ((!moneyBagList[size]->BagIsOpen()) &&
+				(player->GetX() - 1 == moneyBagList[size]->GetX() + 1) && (player->GetY() == moneyBagList[size]->GetY())
+				&& (player->GetDirection() == 3)) {
+
+				moneyBagList[size]->SetX(moneyBagList[size]->GetX() - 1);
+			}
+
+			if ((!moneyBagList[size]->BagIsOpen()) &&
+				(enemyList[i]->GetX() + (SPRITE_WIDTH - 2) == moneyBagList[size]->GetX()) && (enemyList[i]->GetY() == moneyBagList[size]->GetY())
+				&& (enemyList[i]->GetDirection() == 1)) {
+
+				moneyBagList[size]->SetX(moneyBagList[size]->GetX() + 1);
+			}
+			else if ((!moneyBagList[size]->BagIsOpen()) &&
+				(enemyList[i]->GetX() - 1 == moneyBagList[size]->GetX() + 1) && (enemyList[i]->GetY() == moneyBagList[size]->GetY())
+				&& (enemyList[i]->GetDirection() == 3)) {
+
+				moneyBagList[size]->SetX(moneyBagList[size]->GetX() - 1);
+			}
+		}
+		
+	}
+
+	/*for (int size = 0; size < moneyBagList.size(); size++)
+	{
+		for (int i = 0; i < SPRITE_WIDTH - 1; i++)
+		{
+			for (int j = 0; j < SPRITE_WIDTH - 1; j++)
+			{
+				if ((!moneyBagList[size]->BagIsOpen()) &&
+					(player->GetX() + i == moneyBagList[size]->GetX() + j) && (player->GetY() - 1 == moneyBagList[size]->GetY())
+					&& (player->GetDirection() == 0) && (moneyBagList[size]->BagIsFalling()) )
+				{
+					player->UnderMoneyBag();
+				}
+			}
+			
+		}
+	}*/
+
+	for (int size = 0; size < moneyBagList.size(); size++)
+	{
+		for (int i = 0; i < SPRITE_WIDTH - 1; i++)
+		{
+			for (int j = 0; j < SPRITE_WIDTH - 1; j++)
+			{
+				if (moneyBagList[size]->BagIsFalling() &&
+					(moneyBagList[size]->GetX() + i == player->GetX() + j && moneyBagList[size]->GetY() + 1 == player->GetY() ) ||
+					(moneyBagList[size]->GetX() + i == player->GetX() + j && moneyBagList[size]->GetY() == player->GetY() ) )
+				{
+					player->UnderMoneyBag();
+					player->EraseObject();
+					player->SetY(player->GetY() + 1);
+					
+
+					for (int width = 0; width < SPRITE_WIDTH - 1; width++)
+					{
+						if (wData.vBuf[player->GetY() + 1][player->GetX() + width] == (u'#' | (WALL_COLOR << 8))) {
+							player->Death(worldIsRun);
+
+							player->SetX(2);
+							player->SetY(2);
+
+							return;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	// --------------------------
 
 	for (int size = 0; size < bonusList.size(); size++)
 	{
