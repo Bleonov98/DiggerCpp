@@ -52,6 +52,31 @@ void DynamicObject::UnderMoneyBag()
     _isFalling = true;
 }
 
+void DynamicObject::BagCollision()
+{
+    for (int i = 0; i < SPRITE_WIDTH - 1; i++)
+    {
+        if (_direction == UP && wData->vBuf[_y - 1][_x + i] == (u'(' | (Green << 8))) {
+            _direction = STOP;
+        }
+        else if (_direction == UP && wData->vBuf[_y - 1][_x + i] == (u'$' | (Green << 8))) {
+            _direction = STOP;
+        }
+        else if (_direction == UP && wData->vBuf[_y - 1][_x + i] == (u')' | (Green << 8))) {
+            _direction = STOP;
+        }
+
+        if (_direction == DOWN && wData->vBuf[_y + 1][_x + i] == (u'(' | (Green << 8))) {
+            _direction = STOP;
+        }
+        else if (_direction == DOWN && wData->vBuf[_y + 1][_x + i] == (u'$' | (Green << 8))) {
+            _direction = STOP;
+        }
+        else if (_direction == DOWN && wData->vBuf[_y + 1][_x + i] == (u')' | (Green << 8))) {
+            _direction = STOP;
+        }
+    }
+}
 
 // -------------------- Enemy --------------- 
 
@@ -106,6 +131,8 @@ void Enemies::CheckNextStep()
             }
         }
     }
+
+    BagCollision();
 }
 
 void Enemies::MoveTo(int x, int y)
@@ -265,7 +292,7 @@ void Enemies::MoveObject()
         _algMove = false;
     }
 
-    if (!_algMove) {
+    if (!_algMove && !_isFalling) {
 
         if (_direction == UP) {
             SetY(_y -= _speed);
@@ -280,7 +307,7 @@ void Enemies::MoveObject()
             SetX(_x -= _speed);
         }
     }
-    else if (_algMove) {
+    else if (_algMove && !_isFalling) {
         if (!pathToGoal.empty()) {
             SetX(pathToGoal.back().first);
             SetY(pathToGoal.back().second);
@@ -361,6 +388,8 @@ void Player::ChangeDirection()
     else if (GetAsyncKeyState(VK_LEFT) && (_x - 1 != 1)) {
         _direction = LEFT;
     }
+
+    BagCollision();
 }
 
 void Player::Death(bool& worldIsRun)
@@ -375,6 +404,11 @@ void Player::Death(bool& worldIsRun)
     else lifes--;
 
     _isFalling = false;
+}
+
+int Player::GetBulletDirection()
+{
+    return _lastDir;
 }
 
 int Player::GetLifes()
@@ -394,15 +428,19 @@ void Player::MoveObject()
 
         if (_direction == UP) {
             _y -= _speed;
+            _lastDir = UP;
         }
         else if (_direction == RIGHT) {
             _x += _speed;
+            _lastDir = RIGHT;
         }
         else if (_direction == DOWN) {
             _y += _speed;
+            _lastDir = DOWN;
         }
         else if (_direction == LEFT) {
             _x -= _speed;
+            _lastDir = LEFT;
         }
 
         if (_playerAnimation == 0) {
@@ -501,9 +539,10 @@ void MoneyBag::Drop()
     for (int i = 0; i < SPRITE_WIDTH - 1; i++)
     {
         if (wData->vBuf[_y + 1][_x + i] == (u'#' | (WALL_COLOR << 8)) || _y + 1 == ROWS) {
+            _isFalling = false;
+
             if (_fall >= 2) {
                 _isOpen = true;
-                _isFalling = false;
             }
             else if (_fall <= 1) {
                 _fall = 0;

@@ -62,6 +62,8 @@ protected:
 
 	virtual void ChangeDirection() = 0;
 
+	void BagCollision();
+
 	bool _isFalling = false;
 
 	int _direction = STOP;
@@ -78,13 +80,15 @@ public:
 
 	void Death(bool& worldIsRun);
 
+	int GetBulletDirection();
+
 	int GetLifes();
 
 private:
 	
 	static const int DIRECTION = 5;
 
-	int _playerAnimation = 0, lifes = 3;
+	int _playerAnimation = 0, lifes = 3, _lastDir = STOP;
 
 	void ChangeDirection() override;
 
@@ -128,7 +132,7 @@ private:
 		u"0-0"
 	};
 
-	const int VISIBLE_RADIUS = 10;
+	const int VISIBLE_RADIUS = 30;
 
 	vector <pair<int, int>> pathToGoal;
 	vector <pair<int, int>> visibleArea;
@@ -243,9 +247,9 @@ public:
 
 	void DrawObject() override;
 
-private:
-
 	void EraseObject() override;
+
+private:
 
 	void ChangeDirection() override;
 };

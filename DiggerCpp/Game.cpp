@@ -125,10 +125,10 @@ void Game::DrawChanges()
 					printf(CSI "22;31m");
 				}
 				else if ((prevBuf[y][x] >> 8) == Green) {
-					printf(CSI "22;32m");
+					printf(CSI "47;32m");
 				}
 				else if ((prevBuf[y][x] >> 8) == Blue) {
-					printf(CSI "22;34m");
+					printf(CSI "47;34m");
 				}
 				else if ((prevBuf[y][x] >> 8) == Yellow) {
 					printf(CSI "22;33m");
@@ -229,7 +229,7 @@ void Game::SetWall(int x, int y)
 
 void Game::SetDiamond(int x, int y)
 {
-	diamond = new Diamond(&wData, x, y, 0, BrCyan);
+	diamond = new Diamond(&wData, x, y, 0, Blue);
 	allObjectList.push_back(diamond);
 	diamondList.push_back(diamond);
 }
@@ -334,6 +334,7 @@ void Game::DrawLevel()
 void Game::Collision(Player* player)
 {
 	// die settings
+	// player die
 	for (int size = 0; size < enemyList.size(); size++)
 	{
 		for (int i = 0; i < SPRITE_HEIGHT; i++)
@@ -363,6 +364,29 @@ void Game::Collision(Player* player)
 			}
 		}
 	}
+	// enemy die
+	for (int size = 0; size < enemyList.size(); size++)
+	{
+		for (int bullet = 0; bullet < bulletList.size(); bullet++)
+		{
+			for (int i = 0; i < SPRITE_WIDTH - 1; i++)
+			{
+				if ((enemyList[size]->GetX() + i == bulletList[bullet]->GetX() && enemyList[size]->GetY() == bulletList[bullet]->GetY()) || 
+					(enemyList[size]->GetX() + i == bulletList[bullet]->GetX() && enemyList[size]->GetY() + 1 == bulletList[bullet]->GetY()) ||
+					(enemyList[size]->GetX() + i == bulletList[bullet]->GetX() && enemyList[size]->GetY() - 1 == bulletList[bullet]->GetY()))  {
+
+					enemyList[size]->DeleteObject();
+					bulletList[bullet]->DeleteObject();
+					enemyList[size]->EraseObject();
+					bulletList[bullet]->EraseObject();
+
+					score += 500;
+
+					return;
+				}
+			}
+		}
+	}
 	// ------------
 
 	for (int size = 0; size < diamondList.size(); size++)
@@ -384,17 +408,16 @@ void Game::Collision(Player* player)
 	}
 
 	// moneyBag collision settings
-
+	// ---------------------------
 	for (int size = 0; size < moneyBagList.size(); size++)
 	{
-		for (int i = 0; i < SPRITE_HEIGHT; i++)
+		for (int i = 0; i < SPRITE_WIDTH - 1; i++)
 		{
 			for (int j = 0; j < SPRITE_WIDTH - 1; j++)
 			{
 
 				if ( moneyBagList[size]->BagIsOpen() && 
-					 ((player->GetX() + j == moneyBagList[size]->GetX()) && (player->GetY() + i == moneyBagList[size]->GetY() + i) ||
-					 (player->GetX() + j == moneyBagList[size]->GetX() + (SPRITE_WIDTH - 1)) && (player->GetY() + i == moneyBagList[size]->GetY() + i)) ) 
+				   ((player->GetX() + i == moneyBagList[size]->GetX() + j) && (player->GetY() == moneyBagList[size]->GetY())) )
 				{
 
 					score += 1000;
@@ -408,21 +431,20 @@ void Game::Collision(Player* player)
 
 	for (int size = 0; size < moneyBagList.size(); size++)
 	{
+		if ((!moneyBagList[size]->BagIsOpen()) &&
+			(player->GetX() + (SPRITE_WIDTH - 2) == moneyBagList[size]->GetX()) && (player->GetY() == moneyBagList[size]->GetY())
+			&& (player->GetDirection() == 1)) {
+
+			moneyBagList[size]->SetX(moneyBagList[size]->GetX() + 1);
+		}
+		else if ((!moneyBagList[size]->BagIsOpen()) &&
+			(player->GetX() - 1 == moneyBagList[size]->GetX() + 1) && (player->GetY() == moneyBagList[size]->GetY())
+			&& (player->GetDirection() == 3)) {
+
+			moneyBagList[size]->SetX(moneyBagList[size]->GetX() - 1);
+		}
 		for (int i = 0; i < enemyList.size(); i++)
 		{
-			if ((!moneyBagList[size]->BagIsOpen()) &&
-				(player->GetX() + (SPRITE_WIDTH - 2) == moneyBagList[size]->GetX()) && (player->GetY() == moneyBagList[size]->GetY())
-				&& (player->GetDirection() == 1)) {
-
-				moneyBagList[size]->SetX(moneyBagList[size]->GetX() + 1);
-			}
-			else if ((!moneyBagList[size]->BagIsOpen()) &&
-				(player->GetX() - 1 == moneyBagList[size]->GetX() + 1) && (player->GetY() == moneyBagList[size]->GetY())
-				&& (player->GetDirection() == 3)) {
-
-				moneyBagList[size]->SetX(moneyBagList[size]->GetX() - 1);
-			}
-
 			if ((!moneyBagList[size]->BagIsOpen()) &&
 				(enemyList[i]->GetX() + (SPRITE_WIDTH - 2) == moneyBagList[size]->GetX()) && (enemyList[i]->GetY() == moneyBagList[size]->GetY())
 				&& (enemyList[i]->GetDirection() == 1)) {
@@ -439,22 +461,20 @@ void Game::Collision(Player* player)
 		
 	}
 
-	/*for (int size = 0; size < moneyBagList.size(); size++)
+	for (int i = 0; i < moneyBagList.size(); i++)
 	{
-		for (int i = 0; i < SPRITE_WIDTH - 1; i++)
+		for (int j = 0; j < moneyBagList.size(); j++)
 		{
-			for (int j = 0; j < SPRITE_WIDTH - 1; j++)
-			{
-				if ((!moneyBagList[size]->BagIsOpen()) &&
-					(player->GetX() + i == moneyBagList[size]->GetX() + j) && (player->GetY() - 1 == moneyBagList[size]->GetY())
-					&& (player->GetDirection() == 0) && (moneyBagList[size]->BagIsFalling()) )
-				{
-					player->UnderMoneyBag();
-				}
+			if (moneyBagList[i]->GetX() + (SPRITE_WIDTH - 2) == moneyBagList[j]->GetX() && moneyBagList[i]->GetY() == moneyBagList[j]->GetY() 
+				&& (player->GetDirection() == RIGHT)) {
+				moneyBagList[j]->SetX(moneyBagList[j]->GetX() + 1);
 			}
-			
+			if (moneyBagList[i]->GetX() == moneyBagList[j]->GetX() + (SPRITE_WIDTH - 2) && moneyBagList[i]->GetY() == moneyBagList[j]->GetY()
+				&& (player->GetDirection() == LEFT)) {
+				moneyBagList[j]->SetX(moneyBagList[j]->GetX() - 1);
+			}
 		}
-	}*/
+	}
 
 	for (int size = 0; size < moneyBagList.size(); size++)
 	{
@@ -462,9 +482,9 @@ void Game::Collision(Player* player)
 		{
 			for (int j = 0; j < SPRITE_WIDTH - 1; j++)
 			{
-				if (moneyBagList[size]->BagIsFalling() &&
-					(moneyBagList[size]->GetX() + i == player->GetX() + j && moneyBagList[size]->GetY() + 1 == player->GetY() ) ||
-					(moneyBagList[size]->GetX() + i == player->GetX() + j && moneyBagList[size]->GetY() == player->GetY() ) )
+				if ((moneyBagList[size]->BagIsFalling()) &&
+					( (moneyBagList[size]->GetX() + i == player->GetX() + j && moneyBagList[size]->GetY() + 1 == player->GetY() ) ||
+					  (moneyBagList[size]->GetX() + i == player->GetX() + j && moneyBagList[size]->GetY() == player->GetY()) ) )
 				{
 					player->UnderMoneyBag();
 					player->EraseObject();
@@ -480,13 +500,53 @@ void Game::Collision(Player* player)
 							player->SetY(2);
 
 							return;
+
 						}
 					}
 				}
 			}
 		}
 	}
+	// death for player (BagDeath) -^
 
+	for (int size = 0; size < moneyBagList.size(); size++)
+	{
+		for (int enemy = 0; enemy < enemyList.size();  enemy++)
+		{
+			for (int i = 0; i < SPRITE_WIDTH - 1; i++)
+			{
+				for (int j = 0; j < SPRITE_WIDTH - 1; j++)
+				{
+					if ((moneyBagList[size]->BagIsFalling()) &&
+						((moneyBagList[size]->GetX() + i == enemyList[enemy]->GetX() + j && moneyBagList[size]->GetY() + 1 == enemyList[enemy]->GetY()) ||
+						(moneyBagList[size]->GetX() + i == enemyList[enemy]->GetX() + j && moneyBagList[size]->GetY() == enemyList[enemy]->GetY())))
+					{
+						enemyList[enemy]->UnderMoneyBag();
+						enemyList[enemy]->EraseObject();
+						enemyList[enemy]->SetY(moneyBagList[size]->GetY() + 1);
+
+
+						for (int width = 0; width < SPRITE_WIDTH - 1; width++)
+						{
+							if (wData.vBuf[enemyList[enemy]->GetY() + 1][enemyList[enemy]->GetX() + width] == (u'#' | (WALL_COLOR << 8)) ||
+								enemyList[enemy]->GetY() + 1 == ROWS) {
+								enemyList[enemy]->DeleteObject();
+
+								enemyList[enemy]->EraseObject();
+
+								score += 500;
+
+								return;
+							}
+						}
+					}
+				}
+			}
+		}
+		
+	}
+	// death for enemy (BagDeath)
+	// 
 	// --------------------------
 
 	for (int size = 0; size < bonusList.size(); size++)
@@ -557,9 +617,9 @@ void Game::RunWorld(bool& restart)
 		}
 
 		if (bulletList.empty()) {
-			if (GetAsyncKeyState(VK_SPACE)) {
+			if (GetAsyncKeyState(VK_SPACE) & 0x8000) {
 				bullet = new Bullet(&wData, player->GetX() + 1, player->GetY(), 1, Red);
-				bullet->Shot(player->GetDirection());
+				bullet->Shot(player->GetBulletDirection());
 				bulletList.push_back(bullet);
 				allObjectList.push_back(bullet);
 			}
