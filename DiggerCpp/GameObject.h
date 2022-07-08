@@ -117,6 +117,7 @@ class Enemies : public DynamicObject
 {
 public:
 	Enemies(wd* wData, int x, int y, int speed, int color) :DynamicObject(wData, x, y, speed, color) {
+		MoveTo(4, 4);
 	};
 
 	void DrawObject() override;

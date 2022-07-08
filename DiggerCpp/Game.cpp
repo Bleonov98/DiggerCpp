@@ -160,6 +160,9 @@ void Game::DrawChanges()
 				else if ((prevBuf[y][x] >> 8) == White) {
 					printf(CSI "47;37m");
 				}
+				else if ((prevBuf[y][x] >> 8) == DropBag) {
+					printf(CSI "22;32m");
+				}
 				else printf(CSI "22; 44m");
 
 				cout << char(prevBuf[y][x]);
@@ -324,6 +327,14 @@ void Game::DrawLevel()
 	SetMoneyBag(28, 15);
 	SetMoneyBag(28 + SPRITE_WIDTH, 15);
 	SetMoneyBag(28 + SPRITE_WIDTH * 2, 15);
+
+	SetMoneyBag(30, 30);
+	SetMoneyBag(50, 30);
+
+	SetMoneyBag(60, 10);
+
+	SetMoneyBag(80, 15);
+	SetMoneyBag(73, 15);
 	
 	// ------------ BONUS ------------- 
 
@@ -391,13 +402,11 @@ void Game::Collision(Player* player)
 
 	for (int size = 0; size < diamondList.size(); size++)
 	{
-		for (int i = 0; i < SPRITE_HEIGHT; i++)
+		for (int i = 0; i < SPRITE_WIDTH - 1; i++)
 		{
 			for (int j = 0; j < SPRITE_WIDTH - 1; j++)
 			{
-				if ((player->GetX() + j == diamondList[size]->GetX()) && (player->GetY() + i == diamondList[size]->GetY() + i) ||
-					(player->GetX() + j == diamondList[size]->GetX() + (SPRITE_WIDTH - 1)) && (player->GetY() + i == diamondList[size]->GetY() + i)) {
-
+				if (player->GetX() + i == diamondList[size]->GetX() + j && player->GetY() + i == diamondList[size]->GetY() + i) {
 					score += 100;
 					diamondList[size]->DeleteObject();
 
@@ -482,7 +491,7 @@ void Game::Collision(Player* player)
 		{
 			for (int j = 0; j < SPRITE_WIDTH - 1; j++)
 			{
-				if ((moneyBagList[size]->BagIsFalling()) &&
+				if ((moneyBagList[size]->BagIsFalling()) && (!moneyBagList[size]->BagIsOpen()) &&
 					( (moneyBagList[size]->GetX() + i == player->GetX() + j && moneyBagList[size]->GetY() + 1 == player->GetY() ) ||
 					  (moneyBagList[size]->GetX() + i == player->GetX() + j && moneyBagList[size]->GetY() == player->GetY()) ) )
 				{
@@ -517,7 +526,7 @@ void Game::Collision(Player* player)
 			{
 				for (int j = 0; j < SPRITE_WIDTH - 1; j++)
 				{
-					if ((moneyBagList[size]->BagIsFalling()) &&
+					if ((moneyBagList[size]->BagIsFalling()) && (!moneyBagList[size]->BagIsOpen()) &&
 						((moneyBagList[size]->GetX() + i == enemyList[enemy]->GetX() + j && moneyBagList[size]->GetY() + 1 == enemyList[enemy]->GetY()) ||
 						(moneyBagList[size]->GetX() + i == enemyList[enemy]->GetX() + j && moneyBagList[size]->GetY() == enemyList[enemy]->GetY())))
 					{
@@ -605,11 +614,15 @@ void Game::RunWorld(bool& restart)
 
 		player->MoveObject();
 
-		for (int i = 0; i < enemyList.size(); i++)
-		{
-			enemyList[i]->MoveObject();
-			enemyList[i]->IsInVisArea(player);
+		if (!enemyList.empty()) {
+			for (int i = 0; i < enemyList.size(); i++)
+			{
+				enemyList[i]->MoveObject();
+				enemyList[i]->IsInVisArea(player);
+			}
 		}
+		else SpawnEnemy();
+		
 
 		for (int i = 0; i < moneyBagList.size(); i++)
 		{

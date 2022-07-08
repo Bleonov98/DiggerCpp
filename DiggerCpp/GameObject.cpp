@@ -42,6 +42,8 @@ void GameObject::DeleteObject()
     _deleteObject = true;
 }
 
+// ------------------------------------------
+
 int DynamicObject::GetDirection()
 {
     return _direction;
@@ -56,23 +58,29 @@ void DynamicObject::BagCollision()
 {
     for (int i = 0; i < SPRITE_WIDTH - 1; i++)
     {
-        if (_direction == UP && wData->vBuf[_y - 1][_x + i] == (u'(' | (Green << 8))) {
+        if ((_direction == UP && wData->vBuf[_y - 1][_x + i] == (u'(' | (Green << 8))) ||
+            (_direction == UP && wData->vBuf[_y - 1][_x + i] == (u'(' | (DropBag << 8)))) {
             _direction = STOP;
         }
-        else if (_direction == UP && wData->vBuf[_y - 1][_x + i] == (u'$' | (Green << 8))) {
+        else if ((_direction == UP && wData->vBuf[_y - 1][_x + i] == (u'$' | (Green << 8))) ||
+                 (_direction == UP && wData->vBuf[_y - 1][_x + i] == (u'$' | (DropBag << 8))) ) {
             _direction = STOP;
         }
-        else if (_direction == UP && wData->vBuf[_y - 1][_x + i] == (u')' | (Green << 8))) {
+        else if ((_direction == UP && wData->vBuf[_y - 1][_x + i] == (u')' | (Green << 8))) ||
+            (_direction == UP && wData->vBuf[_y - 1][_x + i] == (u')' | (DropBag << 8)))) {
             _direction = STOP;
         }
 
-        if (_direction == DOWN && wData->vBuf[_y + 1][_x + i] == (u'(' | (Green << 8))) {
+        if ((_direction == DOWN && wData->vBuf[_y + 1][_x + i] == (u'(' | (Green << 8))) ||
+            (_direction == DOWN && wData->vBuf[_y + 1][_x + i] == (u'(' | (DropBag << 8)))) {
             _direction = STOP;
         }
-        else if (_direction == DOWN && wData->vBuf[_y + 1][_x + i] == (u'$' | (Green << 8))) {
+        else if ((_direction == DOWN && wData->vBuf[_y + 1][_x + i] == (u'$' | (Green << 8))) ||
+            (_direction == DOWN && wData->vBuf[_y + 1][_x + i] == (u'$' | (DropBag << 8)))) {
             _direction = STOP;
         }
-        else if (_direction == DOWN && wData->vBuf[_y + 1][_x + i] == (u')' | (Green << 8))) {
+        else if ((_direction == DOWN && wData->vBuf[_y + 1][_x + i] == (u')' | (Green << 8)) ) ||
+            (_direction == DOWN && wData->vBuf[_y + 1][_x + i] == (u')' | (DropBag << 8))) ) {
             _direction = STOP;
         }
     }
@@ -157,12 +165,15 @@ void Enemies::MoveTo(int x, int y)
             if (wData->vBuf[i][j] == (u'#' | (WALL_COLOR << 8)) || i <= 1 || j <= 1 || j >= COLS - 1 || i >= ROWS) {
                 wData->grid[i][j] = -99;
             }
+            else if (wData->vBuf[i][j] == (u'(' | (Green << 8)) || wData->vBuf[i][j] == (u')' | (Green << 8))) {
+                wData->grid[i][j] = -99;
+            }
             else wData->grid[i][j] = -1;
         }
     }
     // erase previous grid state
 
-    for (int i = 0; i < SPRITE_HEIGHT; ++i)
+    for (int i = 0; i < SPRITE_HEIGHT; i++)
     {
         for (int j = 0; j < SPRITE_WIDTH - 1; j++)
         {
@@ -406,16 +417,6 @@ void Player::Death(bool& worldIsRun)
     _isFalling = false;
 }
 
-int Player::GetBulletDirection()
-{
-    return _lastDir;
-}
-
-int Player::GetLifes()
-{
-    return lifes;
-}
-
 void Player::MoveObject()
 {
     _direction = STOP;
@@ -462,6 +463,15 @@ void Player::DrawObject()
     }
 }
 
+int Player::GetBulletDirection()
+{
+    return _lastDir;
+}
+
+int Player::GetLifes()
+{
+    return lifes;
+}
 
 // -------------------- Bullet ---------------
 
@@ -531,6 +541,7 @@ void MoneyBag::Drop()
     }
 
     _isFalling = true;
+    _color = DropBag;
 
     EraseObject();
     _y++;
