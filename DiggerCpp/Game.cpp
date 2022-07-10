@@ -622,7 +622,6 @@ void Game::RunWorld(bool& restart)
 			}
 		}
 		else SpawnEnemy();
-		
 
 		for (int i = 0; i < moneyBagList.size(); i++)
 		{

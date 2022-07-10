@@ -165,7 +165,10 @@ void Enemies::MoveTo(int x, int y)
             if (wData->vBuf[i][j] == (u'#' | (WALL_COLOR << 8)) || i <= 1 || j <= 1 || j >= COLS - 1 || i >= ROWS) {
                 wData->grid[i][j] = -99;
             }
-            else if (wData->vBuf[i][j] == (u'(' | (Green << 8)) || wData->vBuf[i][j] == (u')' | (Green << 8))) {
+            else if (wData->vBuf[i][j] == (u'(' | (Green << 8)) || wData->vBuf[i][j] == (u')' | (Green << 8)) || wData->vBuf[i][j] == (u'$' | (Green << 8))) {
+                wData->grid[i][j] = -99;
+            }
+            else if (wData->vBuf[i][j] == (u'(' | (DropBag << 8)) || wData->vBuf[i][j] == (u')' | (DropBag << 8)) || wData->vBuf[i][j] == (u'$' | (DropBag << 8))) {
                 wData->grid[i][j] = -99;
             }
             else wData->grid[i][j] = -1;
@@ -180,9 +183,12 @@ void Enemies::MoveTo(int x, int y)
             if (wData->grid[y][x + j] == -99) {
                 return;
             }
+            if (wData->grid[_y][_x + j] == -99) {
+                return;
+            }
         }
     }
-
+    
     pair<int, int> startPos = make_pair(GetX(), GetY());
 
     int d = 0; // steps from start to goal
@@ -198,6 +204,10 @@ void Enemies::MoveTo(int x, int y)
     while (!stop) {
 
         d++;
+
+        if (d >= (ROWS - 2) * (COLS - 2)) {
+            return;
+        }
 
         for (int i = 0; i < prevWave.size(); i++)
         {
