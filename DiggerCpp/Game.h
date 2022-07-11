@@ -10,7 +10,7 @@ private:
     char16_t prevBuf[ROWS][COLS];
     char coord[50];
 
-    bool worldIsRun = true, win = false, gunReload = true;
+    bool worldIsRun = true, win = false, gunReload = true, immortal = false;
 
     int score = 0;
 

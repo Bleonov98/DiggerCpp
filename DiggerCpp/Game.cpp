@@ -411,7 +411,7 @@ void Game::Collision(Player* player)
 		{
 			for (int j = 0; j < SPRITE_WIDTH - 1; j++)
 			{
-				if ( (player->GetX() + i == enemyList[size]->GetX() + j) && (player->GetY()== enemyList[size]->GetY()) && (!player->IsImmortal()) ) {
+				if ( (player->GetX() + i == enemyList[size]->GetX() + j) && (player->GetY() == enemyList[size]->GetY()) && (!immortal) ) {
 
 					player->Death(worldIsRun);
 
@@ -429,7 +429,7 @@ void Game::Collision(Player* player)
 
 					return;
 				}
-				else if ((player->GetX() + i == enemyList[size]->GetX() + j) && (player->GetY() == enemyList[size]->GetY()) && (player->IsImmortal())) {
+				else if ((player->GetX() + i == enemyList[size]->GetX() + j) && (player->GetY() == enemyList[size]->GetY()) && (immortal)) {
 					enemyList[size]->DeleteObject();
 					enemyList[size]->EraseObject();
 
@@ -643,15 +643,16 @@ void Game::Collision(Player* player)
 				if ( (player->GetX() + j == bonusList[size]->GetX() && player->GetY() + i == bonusList[size]->GetY() + i) ||
 					 (player->GetX() + j == bonusList[size]->GetX() + (SPRITE_WIDTH - 1) && player->GetY() + i == bonusList[size]->GetY() + i) ) {
 
-					PlaySound(MAKEINTRESOURCE(IDR_WAVE1), NULL, SND_RESOURCE | SND_ASYNC);
+					PlaySound(MAKEINTRESOURCE(IDR_WAVE2), NULL, SND_RESOURCE | SND_ASYNC);
 
 					score += 500;
 					bonusList[size]->DeleteObject();
 
-					thread immortal([&] {
-						player->Immortal();
+					thread immortalGo([&] {
+						immortal = true;
+						player->Immortal(immortal);
 					});
-					immortal.detach();
+					immortalGo.detach();
 
 					return;
 				}

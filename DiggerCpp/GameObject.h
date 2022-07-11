@@ -80,9 +80,7 @@ public:
 
 	void Death(bool& worldIsRun);
 
-	void Immortal();
-
-	bool IsImmortal();
+	void Immortal(bool immortal);
 
 	int GetBulletDirection();
 
@@ -93,8 +91,6 @@ private:
 	static const int DIRECTION = 5;
 
 	int _playerAnimation = 0, lifes = 3, _lastDir = STOP;
-
-	bool _immortal = false;
 
 	void ChangeDirection() override;
 

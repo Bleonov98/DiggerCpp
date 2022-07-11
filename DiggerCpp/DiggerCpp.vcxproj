@@ -157,7 +157,6 @@
     <Text Include="..\DiggerArea.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Media Include="..\bon.wav" />
     <Media Include="..\drop.wav" />
     <Media Include="..\goldPick.wav" />
     <Media Include="..\pickDiamond.wav" />

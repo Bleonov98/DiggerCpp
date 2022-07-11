@@ -427,11 +427,6 @@ void Player::Death(bool& worldIsRun)
     _isFalling = false;
 }
 
-bool Player::IsImmortal()
-{
-    return _immortal;
-}
-
 void Player::MoveObject()
 {
     _direction = STOP;
@@ -467,11 +462,11 @@ void Player::MoveObject()
     }
 }
 
-void Player::Immortal()
+void Player::Immortal(bool immortal)
 {
-    _immortal = true;
     Sleep(8000);
-    _immortal = false;
+
+    immortal = false;
 }
 
 void Player::DrawObject()

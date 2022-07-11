@@ -54,9 +54,6 @@
     <Media Include="..\pickDiamond.wav">
       <Filter>Resource Files</Filter>
     </Media>
-    <Media Include="..\bon.wav">
-      <Filter>Resource Files</Filter>
-    </Media>
     <Media Include="..\shot.wav">
       <Filter>Resource Files</Filter>
     </Media>

@@ -70,13 +70,13 @@ IDR_TEXT1               TEXT                    "C:\\Users\\Borys\\source\\repos
 
 IDR_WAVE1               WAVE                    "..\\pickDiamond.wav"
 
-IDR_WAVE2               WAVE                    "..\\bon.wav"
-
 IDR_WAVE3               WAVE                    "C:\\Users\\Borys\\source\\repos\\DiggerCpp\\shot.wav"
 
 IDR_WAVE4               WAVE                    "C:\\Users\\Borys\\source\\repos\\DiggerCpp\\drop.wav"
 
 IDR_WAVE5               WAVE                    "C:\\Users\\Borys\\source\\repos\\DiggerCpp\\goldPick.wav"
+
+IDR_WAVE2               WAVE                    "..\\bon.wav"
 
 #endif    // Ukrainian (Ukraine) resources
 /////////////////////////////////////////////////////////////////////////////
