@@ -427,6 +427,11 @@ void Player::Death(bool& worldIsRun)
     _isFalling = false;
 }
 
+bool Player::IsImmortal()
+{
+    return _immortal;
+}
+
 void Player::MoveObject()
 {
     _direction = STOP;
@@ -460,6 +465,13 @@ void Player::MoveObject()
         else _playerAnimation = 0;
 
     }
+}
+
+void Player::Immortal()
+{
+    _immortal = true;
+    Sleep(8000);
+    _immortal = false;
 }
 
 void Player::DrawObject()
@@ -560,6 +572,7 @@ void MoneyBag::Drop()
     for (int i = 0; i < SPRITE_WIDTH - 1; i++)
     {
         if (wData->vBuf[_y + 1][_x + i] == (u'#' | (WALL_COLOR << 8)) || _y + 1 == ROWS) {
+
             _isFalling = false;
 
             if (_fall >= 2) {

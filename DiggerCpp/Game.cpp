@@ -258,67 +258,131 @@ void Game::SpawnEnemy()
 	enemyList.push_back(enemy);
 }
 
+void Game::ReloadGun()
+{
+	Sleep(10000);
+	gunReload = true;
+}
+
 void Game::DrawLevel()
 {
 	// --------------------- WALL ---------------------
 	
-	SetWall(5, 2);
+	SetWall(2, 3);
 	SetWall(WALL_WIDTH + 4, 2);
 	SetWall(WALL_WIDTH * 2 + 3, 2);
-	SetWall(WALL_WIDTH * 3 + 2, 2);
+	SetWall(WALL_WIDTH * 3 + 6, 3);
 
-	SetWall(5, WALL_HEIGHT + 2);
+	SetWall(2, WALL_HEIGHT + 2);
 	SetWall(WALL_WIDTH + 4, WALL_HEIGHT + 2);
-	SetWall(WALL_WIDTH * 2 + 3, WALL_HEIGHT + 2);
-	SetWall(WALL_WIDTH * 3 + 2, WALL_HEIGHT + 2);
+	SetWall(WALL_WIDTH * 2 + 7, WALL_HEIGHT + 4);
+	SetWall(WALL_WIDTH * 3 + 6, WALL_HEIGHT + 2);
 
-	SetWall(5, WALL_HEIGHT * 2 + 2);
+	SetWall(2, WALL_HEIGHT * 2 + 2);
 	SetWall(WALL_WIDTH + 4, WALL_HEIGHT * 2 + 2);
-	SetWall(WALL_WIDTH * 2 + 3, WALL_HEIGHT * 2 + 2);
-	SetWall(WALL_WIDTH * 3 + 2, WALL_HEIGHT * 2 + 2);
+	SetWall(WALL_WIDTH * 2 + 7, WALL_HEIGHT * 2 + 2);
+	SetWall(WALL_WIDTH * 3 + 6, WALL_HEIGHT * 2 + 2);
 
-	SetWall(5, WALL_HEIGHT * 3 + 2);
+	SetWall(2, WALL_HEIGHT * 3 + 2);
 	SetWall(WALL_WIDTH + 4, WALL_HEIGHT * 3 + 2);
-	SetWall(WALL_WIDTH * 2 + 3, WALL_HEIGHT * 3 + 2);
-	SetWall(WALL_WIDTH * 3 + 2, WALL_HEIGHT * 3 + 2);
+	SetWall(WALL_WIDTH * 2 + 7, WALL_HEIGHT * 3 + 2);
+	SetWall(WALL_WIDTH * 3 + 6, WALL_HEIGHT * 3 + 2);
 
-	SetWall(5, WALL_HEIGHT * 4 + 2);
+	SetWall(2, WALL_HEIGHT * 4 + 2);
 	SetWall(WALL_WIDTH + 4, WALL_HEIGHT * 4 + 2);
-	SetWall(WALL_WIDTH * 2 + 3, WALL_HEIGHT * 4 + 2);
-	SetWall(WALL_WIDTH * 3 + 2, WALL_HEIGHT * 4 + 2);
+	SetWall(WALL_WIDTH * 2 + 7, WALL_HEIGHT * 4 + 2);
+	SetWall(WALL_WIDTH * 3 + 6, WALL_HEIGHT * 4 + 2);
+
+	SetWall(2, WALL_HEIGHT * 5);
+	SetWall(WALL_WIDTH * 2 + 7, WALL_HEIGHT * 5);
+	SetWall(WALL_WIDTH * 3 + 6, WALL_HEIGHT * 5);
 
 	// ---- DiamondBlock_1 -----
 
 	SetDiamond(12, 15);
 	SetDiamond(12 + SPRITE_WIDTH, 15);
-	SetDiamond(12 + SPRITE_WIDTH * 2, 15);
+	SetDiamond(12 - SPRITE_WIDTH, 15);
 
-	SetDiamond(10 + SPRITE_WIDTH, 17);
-	SetDiamond(10 + SPRITE_WIDTH * 2, 17);
+	SetDiamond(14, 17);
+	SetDiamond(14 - SPRITE_WIDTH, 17);
 
-	SetDiamond(12 + SPRITE_WIDTH, 19);
+	SetDiamond(12, 19);
 	
 	// ---- DiamondBlock_2 -----
 
-	SetDiamond(52, 25);
 	SetDiamond(52 + SPRITE_WIDTH, 25);
 	SetDiamond(52 + SPRITE_WIDTH * 2, 25);
+	SetDiamond(52 + SPRITE_WIDTH * 3, 25);
 
-	SetDiamond(50 + SPRITE_WIDTH, 27);
-	SetDiamond(50 + SPRITE_WIDTH * 2, 27);
+	SetDiamond(52 + SPRITE_WIDTH, 27);
+	SetDiamond(52 + SPRITE_WIDTH * 2, 27);
+	SetDiamond(52 + SPRITE_WIDTH * 3, 27);
 
 	SetDiamond(52 + SPRITE_WIDTH, 29);
+	SetDiamond(52 + SPRITE_WIDTH * 2, 29);
+	SetDiamond(52 + SPRITE_WIDTH * 3, 29);
 
 	// ---- DiamondBlock_3 -----
 
-	SetDiamond(32, 35);
-	SetDiamond(32 + SPRITE_WIDTH, 35);
-	SetDiamond(32 + SPRITE_WIDTH * 2, 35);
+	SetDiamond(66, 39);
+	SetDiamond(66 + SPRITE_WIDTH, 39);
+	SetDiamond(66 + SPRITE_WIDTH * 2, 39);
+	SetDiamond(66 + SPRITE_WIDTH * 3, 39);
+	SetDiamond(66 + SPRITE_WIDTH * 4, 39);
 
-	SetDiamond(30 + SPRITE_WIDTH, 37);
-	SetDiamond(30 + SPRITE_WIDTH * 2, 37);
+	SetDiamond(66, 41);
+	SetDiamond(66 + SPRITE_WIDTH * 4, 41);
 
-	SetDiamond(32 + SPRITE_WIDTH, 39);
+	SetDiamond(66, 43);
+	SetDiamond(66 + SPRITE_WIDTH, 43);
+	SetDiamond(66 + SPRITE_WIDTH * 2, 43);
+	SetDiamond(66 + SPRITE_WIDTH * 3, 43);
+	SetDiamond(66 + SPRITE_WIDTH * 4, 43);
+
+	// ---- DiamondBlock_4 -----
+
+	SetDiamond(30, 5);
+	SetDiamond(30 + SPRITE_WIDTH, 5);
+	SetDiamond(30 + SPRITE_WIDTH * 2, 5);
+	SetDiamond(30 + SPRITE_WIDTH * 3, 5);
+	SetDiamond(30 + SPRITE_WIDTH * 4, 5);
+
+	SetDiamond(30, 7);
+	SetDiamond(30 + SPRITE_WIDTH, 7);
+	SetDiamond(30 + SPRITE_WIDTH * 2, 7);
+	SetDiamond(30 + SPRITE_WIDTH * 3, 7);
+	SetDiamond(30 + SPRITE_WIDTH * 4, 7);
+
+	// ---- DiamondBlock_5 -----
+
+	SetDiamond(30, 25);
+	SetDiamond(30 + SPRITE_WIDTH, 25);
+	SetDiamond(30 + SPRITE_WIDTH * 2, 25);
+
+	SetDiamond(30, 45);
+	SetDiamond(30 + SPRITE_WIDTH, 45);
+
+	// ---- DiamondBlock_6 -----
+
+	SetDiamond(5, 34);
+	SetDiamond(5 + SPRITE_WIDTH, 34);
+	SetDiamond(5 + SPRITE_WIDTH * 2, 34);
+
+	SetDiamond(5, 36);
+	SetDiamond(5 + SPRITE_WIDTH, 36);
+	SetDiamond(5 + SPRITE_WIDTH * 2, 36);
+
+	SetDiamond(5, 38);
+	SetDiamond(5 + SPRITE_WIDTH, 38);
+	SetDiamond(5 + SPRITE_WIDTH * 2, 38);
+
+	SetDiamond(5, 40);
+	SetDiamond(5 + SPRITE_WIDTH, 40);
+	SetDiamond(5 + SPRITE_WIDTH * 2, 40);
+
+	SetDiamond(5, 42);
+	SetDiamond(5 + SPRITE_WIDTH, 42);
+	SetDiamond(5 + SPRITE_WIDTH * 2, 42);
 
 	// ------------ MONEY BAG --------- 
 
@@ -335,11 +399,6 @@ void Game::DrawLevel()
 
 	SetMoneyBag(80, 15);
 	SetMoneyBag(73, 15);
-	
-	// ------------ BONUS ------------- 
-
-	SetBonus(COLS - SPRITE_WIDTH, 2);
-
 }
 
 void Game::Collision(Player* player)
@@ -348,13 +407,11 @@ void Game::Collision(Player* player)
 	// player die
 	for (int size = 0; size < enemyList.size(); size++)
 	{
-		for (int i = 0; i < SPRITE_HEIGHT; i++)
+		for (int i = 0; i < SPRITE_WIDTH - 1; i++)
 		{
 			for (int j = 0; j < SPRITE_WIDTH - 1; j++)
 			{
-				if ( (player->GetX() + j == enemyList[size]->GetX()) && (player->GetY() + i == enemyList[size]->GetY() + i) ||
-					 (player->GetX() + j == enemyList[size]->GetX() + 1) && (player->GetY() + i == enemyList[size]->GetY() + i) ||
-					 (player->GetX() + j == enemyList[size]->GetX() + 2) && (player->GetY() + i == enemyList[size]->GetY() + i) ) {
+				if ( (player->GetX() + i == enemyList[size]->GetX() + j) && (player->GetY()== enemyList[size]->GetY()) && (!player->IsImmortal()) ) {
 
 					player->Death(worldIsRun);
 
@@ -369,6 +426,14 @@ void Game::Collision(Player* player)
 					}
 
 					Sleep(200);
+
+					return;
+				}
+				else if ((player->GetX() + i == enemyList[size]->GetX() + j) && (player->GetY() == enemyList[size]->GetY()) && (player->IsImmortal())) {
+					enemyList[size]->DeleteObject();
+					enemyList[size]->EraseObject();
+
+					score += 500;
 
 					return;
 				}
@@ -502,7 +567,8 @@ void Game::Collision(Player* player)
 
 					for (int width = 0; width < SPRITE_WIDTH - 1; width++)
 					{
-						if (wData.vBuf[player->GetY() + 1][player->GetX() + width] == (u'#' | (WALL_COLOR << 8))) {
+						if (wData.vBuf[player->GetY() + 1][player->GetX() + width] == (u'#' | (WALL_COLOR << 8))
+							|| player->GetY() + 1 == ROWS) {
 							player->Death(worldIsRun);
 
 							player->SetX(2);
@@ -520,6 +586,7 @@ void Game::Collision(Player* player)
 
 	for (int size = 0; size < moneyBagList.size(); size++)
 	{
+		bool died = false;
 		for (int enemy = 0; enemy < enemyList.size();  enemy++)
 		{
 			for (int i = 0; i < SPRITE_WIDTH - 1; i++)
@@ -545,11 +612,15 @@ void Game::Collision(Player* player)
 
 								score += 500;
 
-								return;
+								died = true;
+
+								if (died) break;
 							}
 						}
 					}
+					if (died) break;
 				}
+				if (died) break;
 			}
 		}
 		
@@ -570,6 +641,11 @@ void Game::Collision(Player* player)
 
 					score += 500;
 					bonusList[size]->DeleteObject();
+
+					thread immortal([&] {
+						player->Immortal();
+					});
+					immortal.detach();
 
 					return;
 				}
@@ -594,7 +670,8 @@ void Game::RunWorld(bool& restart)
 	Player* player = new Player(&wData, 2, 2, 1, Cyan);
 	allObjectList.push_back(player);
 
-	SpawnEnemy();
+	int tick = 0;
+	int enemyCnt = 0;
 
 	while (worldIsRun) {
 
@@ -621,19 +698,31 @@ void Game::RunWorld(bool& restart)
 				enemyList[i]->IsInVisArea(player);
 			}
 		}
-		else SpawnEnemy();
+		if (tick % 50 == 0 && enemyList.size() < 3 && enemyCnt <= 10) {
+			SpawnEnemy();
+			enemyCnt++;
+			if (enemyCnt == 6) {
+				SetBonus(COLS - SPRITE_WIDTH, 2);
+			}
+		}
 
 		for (int i = 0; i < moneyBagList.size(); i++)
 		{
 			moneyBagList[i]->Drop();
 		}
 
-		if (bulletList.empty()) {
+		if (bulletList.empty() && gunReload) {
 			if (GetAsyncKeyState(VK_SPACE) & 0x8000) {
 				bullet = new Bullet(&wData, player->GetX() + 1, player->GetY(), 1, Red);
 				bullet->Shot(player->GetBulletDirection());
 				bulletList.push_back(bullet);
 				allObjectList.push_back(bullet);
+				
+				gunReload = false;
+				thread reloadMyGun([&] {
+					ReloadGun();
+					});
+				reloadMyGun.detach();
 			}
 		}
 
@@ -651,6 +740,13 @@ void Game::RunWorld(bool& restart)
 		DrawInfo(player);
 
 		Sleep(60);
+
+		tick++;
+
+		if (diamondList.empty() && moneyBagList.empty() && enemyList.empty()) {
+			win = true;
+			worldIsRun = false;
+		}
 	}
 
 	DrawEndInfo(restart);

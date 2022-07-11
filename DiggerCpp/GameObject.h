@@ -80,6 +80,10 @@ public:
 
 	void Death(bool& worldIsRun);
 
+	void Immortal();
+
+	bool IsImmortal();
+
 	int GetBulletDirection();
 
 	int GetLifes();
@@ -89,6 +93,8 @@ private:
 	static const int DIRECTION = 5;
 
 	int _playerAnimation = 0, lifes = 3, _lastDir = STOP;
+
+	bool _immortal = false;
 
 	void ChangeDirection() override;
 
@@ -117,7 +123,7 @@ class Enemies : public DynamicObject
 {
 public:
 	Enemies(wd* wData, int x, int y, int speed, int color) :DynamicObject(wData, x, y, speed, color) {
-		MoveTo(4, 4);
+		MoveTo(2, 2);
 	};
 
 	void DrawObject() override;
@@ -160,9 +166,13 @@ public:
 
 	void Drop();
 
+	void CheckFall();
+
 	bool BagIsOpen();
 
 	bool BagIsFalling();
+
+	bool BagIsReady();
 
 private:
 
@@ -178,7 +188,6 @@ private:
 	bool _isOpen = false, _isFalling = false;
 
 	int _fall = 0;
-
 };
 
 class Diamond : public GameObject 

@@ -10,7 +10,7 @@ private:
     char16_t prevBuf[ROWS][COLS];
     char coord[50];
 
-    bool worldIsRun = true, win = false;
+    bool worldIsRun = true, win = false, gunReload = true;
 
     int score = 0;
 
@@ -160,6 +160,8 @@ protected:
     void SetBonus(int x, int y);
 
     void SpawnEnemy();
+
+    void ReloadGun();
 
     void DrawLevel();
 
