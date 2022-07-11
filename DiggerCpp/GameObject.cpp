@@ -577,6 +577,7 @@ void MoneyBag::Drop()
 
             if (_fall >= 2) {
                 _isOpen = true;
+                PlaySound(MAKEINTRESOURCE(IDR_WAVE4), NULL, SND_RESOURCE | SND_ASYNC);
             }
             else if (_fall <= 1) {
                 _fall = 0;

@@ -472,6 +472,8 @@ void Game::Collision(Player* player)
 			for (int j = 0; j < SPRITE_WIDTH - 1; j++)
 			{
 				if (player->GetX() + i == diamondList[size]->GetX() + j && player->GetY() + i == diamondList[size]->GetY() + i) {
+					PlaySound(MAKEINTRESOURCE(IDR_WAVE1), NULL, SND_RESOURCE | SND_ASYNC);
+
 					score += 100;
 					diamondList[size]->DeleteObject();
 
@@ -493,6 +495,8 @@ void Game::Collision(Player* player)
 				if ( moneyBagList[size]->BagIsOpen() && 
 				   ((player->GetX() + i == moneyBagList[size]->GetX() + j) && (player->GetY() == moneyBagList[size]->GetY())) )
 				{
+
+					PlaySound(MAKEINTRESOURCE(IDR_WAVE5), NULL, SND_RESOURCE | SND_ASYNC);
 
 					score += 1000;
 					moneyBagList[size]->DeleteObject();
@@ -639,6 +643,8 @@ void Game::Collision(Player* player)
 				if ( (player->GetX() + j == bonusList[size]->GetX() && player->GetY() + i == bonusList[size]->GetY() + i) ||
 					 (player->GetX() + j == bonusList[size]->GetX() + (SPRITE_WIDTH - 1) && player->GetY() + i == bonusList[size]->GetY() + i) ) {
 
+					PlaySound(MAKEINTRESOURCE(IDR_WAVE1), NULL, SND_RESOURCE | SND_ASYNC);
+
 					score += 500;
 					bonusList[size]->DeleteObject();
 
@@ -723,6 +729,8 @@ void Game::RunWorld(bool& restart)
 					ReloadGun();
 					});
 				reloadMyGun.detach();
+
+				PlaySound(MAKEINTRESOURCE(IDR_WAVE3), NULL, SND_RESOURCE | SND_ASYNC);
 			}
 		}
 
