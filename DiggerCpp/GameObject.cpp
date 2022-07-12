@@ -462,8 +462,10 @@ void Player::MoveObject()
     }
 }
 
-void Player::Immortal(bool immortal)
+void Player::Immortal(bool &immortal)
 {
+    immortal = true;
+
     Sleep(8000);
 
     immortal = false;

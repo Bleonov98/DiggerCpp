@@ -80,7 +80,7 @@ public:
 
 	void Death(bool& worldIsRun);
 
-	void Immortal(bool immortal);
+	void Immortal(bool &immortal);
 
 	int GetBulletDirection();
 

@@ -649,7 +649,6 @@ void Game::Collision(Player* player)
 					bonusList[size]->DeleteObject();
 
 					thread immortalGo([&] {
-						immortal = true;
 						player->Immortal(immortal);
 					});
 					immortalGo.detach();
